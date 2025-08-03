@@ -4,26 +4,29 @@
       class="flex items-center text-gray-700 dark:text-gray-400"
       @click.prevent="toggleDropdown"
     >
-      <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
-        <img src="/images/user/owner.jpg" alt="User" />
+      <span
+        class="mr-3 flex items-center justify-center rounded-full h-11 w-11 text-white font-medium text-lg"
+        :style="{ backgroundColor: avatarColor }"
+      >
+        {{ userInitials }}
       </span>
 
-      <span class="block mr-1 font-medium text-theme-sm">Musharof </span>
+      <span class="block mr-2 font-medium text-theme-sm">{{ user?.name || 'کاربر' }} </span>
 
-      <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
+      <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" class="mr-1" />
     </button>
 
     <!-- Dropdown Start -->
     <div
       v-if="dropdownOpen"
-      class="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+      class="absolute left-0 mt-[24px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
     >
       <div>
         <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          Musharof Chowdhury
+          {{ user?.name || 'کاربر گرامی' }}
         </span>
         <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-          randomuser@pimjo.com
+          {{ user?.email || 'user@example.com' }}
         </span>
       </div>
 
@@ -42,33 +45,54 @@
           </router-link>
         </li>
       </ul>
-      <router-link
-        to="/signin"
+      <button
         @click="signOut"
-        class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 w-full text-right"
       >
         <LogoutIcon
           class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
         />
-        Sign out
-      </router-link>
+        خروج از سیستم
+      </button>
     </div>
     <!-- Dropdown End -->
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
 import { RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+
+const { user, logout } = useAuth()
+
+// Computed property for user initials
+const userInitials = computed(() => {
+  if (!user.value?.name) return 'کا' // Default Persian initials for "کاربر"
+
+  const name = user.value.name.trim()
+  const words = name.split(' ')
+
+  if (words.length >= 2) {
+    // Get first letter of first and last name
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  } else {
+    // Get first two letters of single name
+    return name.substring(0, 2).toUpperCase()
+  }
+})
+
+// Fixed avatar color
+const avatarColor = '#1D2939'
 
 const dropdownOpen = ref(false)
-const dropdownRef = ref(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 
 const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
-  { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
-  { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
+  { href: '/profile', icon: UserCircleIcon, text: 'ویرایش پروفایل' },
+  { href: '/settings', icon: SettingsIcon, text: 'تنظیمات حساب کاربری' },
+  { href: '/support', icon: InfoCircleIcon, text: 'پشتیبانی' },
 ]
 
 const toggleDropdown = () => {
@@ -80,13 +104,12 @@ const closeDropdown = () => {
 }
 
 const signOut = () => {
-  // Implement sign out logic here
-  console.log('Signing out...')
+  logout()
   closeDropdown()
 }
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+const handleClickOutside = (event: Event) => {
+  if (dropdownRef.value && event.target && !dropdownRef.value.contains(event.target as Node)) {
     closeDropdown()
   }
 }

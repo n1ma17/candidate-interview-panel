@@ -6,7 +6,7 @@
     >
       <span
         :class="{ hidden: !notifying, flex: notifying }"
-        class="absolute right-0 top-0.5 z-1 h-2 w-2 rounded-full bg-orange-400"
+        class="absolute left-0 top-[24px] z-1 h-2 w-2 rounded-full bg-orange-400"
       >
         <span
           class="absolute inline-flex w-full h-full bg-orange-400 rounded-full opacity-75 -z-1 animate-ping"
@@ -105,13 +105,13 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const dropdownOpen = ref(false)
 const notifying = ref(true)
-const dropdownRef = ref(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 
 const notifications = ref([
   {
@@ -206,20 +206,20 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+const handleClickOutside = (event: Event) => {
+  if (dropdownRef.value && event.target && !dropdownRef.value.contains(event.target as Node)) {
     closeDropdown()
   }
 }
 
-const handleItemClick = (event) => {
+const handleItemClick = (event: MouseEvent) => {
   event.preventDefault()
   // Handle the item click action here
   console.log('Notification item clicked')
   closeDropdown()
 }
 
-const handleViewAllClick = (event) => {
+const handleViewAllClick = (event: MouseEvent) => {
   event.preventDefault()
   // Handle the "View All Notification" action here
   console.log('View All Notifications clicked')

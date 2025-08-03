@@ -1,12 +1,12 @@
 <template>
   <aside
     :class="[
-      'fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-99999 border-r border-gray-200',
+      'fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 right-0 bg-primary dark:border-primary text-gray-900 h-screen transition-all duration-300 ease-in-out z-99999',
       {
         'lg:w-[290px]': isExpanded || isMobileOpen || isHovered,
         'lg:w-[90px]': !isExpanded && !isHovered,
-        'translate-x-0 w-[290px]': isMobileOpen,
-        '-translate-x-full': !isMobileOpen,
+        'translate-x-0 w-full': isMobileOpen,
+        'translate-x-full': !isMobileOpen,
         'lg:translate-x-0': true,
       },
     ]"
@@ -66,8 +66,39 @@
             </h2>
             <ul class="flex flex-col gap-4">
               <li v-for="(item, index) in menuGroup.items" :key="item.name">
+                <!-- Direct menu item without submenu -->
+                <router-link
+                  v-if="!item.subItems && item.path"
+                  :to="item.path"
+                  :class="[
+                    'menu-item group w-full',
+                    {
+                      'menu-item-active': isActive(item.path),
+                      'menu-item-inactive': !isActive(item.path),
+                    },
+                    !isExpanded && !isHovered
+                      ? 'lg:justify-center'
+                      : 'lg:justify-start',
+                  ]"
+                >
+                  <span
+                    :class="[
+                      isActive(item.path)
+                        ? 'menu-item-icon-active'
+                        : 'menu-item-icon-inactive',
+                    ]"
+                  >
+                    <component :is="item.icon" />
+                  </span>
+                  <span
+                    v-if="isExpanded || isHovered || isMobileOpen"
+                    class="menu-item-text"
+                    >{{ item.name }}</span
+                  >
+                </router-link>
+                <!-- Menu item with submenu -->
                 <button
-                  v-if="item.subItems"
+                  v-else
                   @click="toggleSubmenu(groupIndex, index)"
                   :class="[
                     'menu-item group w-full',
@@ -99,7 +130,7 @@
                     :class="[
                       'ml-auto w-5 h-5 transition-transform duration-200',
                       {
-                        'rotate-180 text-brand-500': isSubmenuOpen(
+                        'rotate-180 text-gray-500': isSubmenuOpen(
                           groupIndex,
                           index
                         ),
@@ -107,32 +138,6 @@
                     ]"
                   />
                 </button>
-                <router-link
-                  v-else-if="item.path"
-                  :to="item.path"
-                  :class="[
-                    'menu-item group',
-                    {
-                      'menu-item-active': isActive(item.path),
-                      'menu-item-inactive': !isActive(item.path),
-                    },
-                  ]"
-                >
-                  <span
-                    :class="[
-                      isActive(item.path)
-                        ? 'menu-item-icon-active'
-                        : 'menu-item-icon-inactive',
-                    ]"
-                  >
-                    <component :is="item.icon" />
-                  </span>
-                  <span
-                    v-if="isExpanded || isHovered || isMobileOpen"
-                    class="menu-item-text"
-                    >{{ item.name }}</span
-                  >
-                </router-link>
                 <transition
                   @enter="startTransition"
                   @after-enter="endTransition"
@@ -206,119 +211,69 @@
           </div>
         </div>
       </nav>
-      <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" />
     </div>
   </aside>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
+<script setup lang="ts">
+import { computed, type Component } from "vue";
 import { useRoute } from "vue-router";
 
 import {
   GridIcon,
-  CalenderIcon,
-  UserCircleIcon,
-  ChatIcon,
-  MailIcon,
-  DocsIcon,
   PieChartIcon,
   ChevronDownIcon,
   HorizontalDots,
-  PageIcon,
-  TableIcon,
-  ListIcon,
-  PlugInIcon,
 } from "../../icons";
-import SidebarWidget from "./SidebarWidget.vue";
-import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
+
+// Type definitions
+interface SubItem {
+  name: string;
+  path: string;
+  pro: boolean;
+  new: boolean;
+}
+
+interface MenuItem {
+  icon: Component;
+  name: string;
+  path?: string;
+  subItems?: SubItem[];
+}
 
 const route = useRoute();
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
 
-const menuGroups = [
+const menuGroups: { title: string; items: MenuItem[] }[] = [
   {
-    title: "Menu",
+    title: "منو اصلی",
     items: [
       {
         icon: GridIcon,
-        name: "Dashboard",
-        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-      },
-      {
-        icon: CalenderIcon,
-        name: "Calendar",
-        path: "/calendar",
-      },
-      {
-        icon: UserCircleIcon,
-        name: "User Profile",
-        path: "/profile",
-      },
-
-      {
-        name: "Forms",
-        icon: ListIcon,
-        subItems: [
-          { name: "Form Elements", path: "/form-elements", pro: false },
-        ],
-      },
-      {
-        name: "Tables",
-        icon: TableIcon,
-        subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-      },
-      {
-        name: "Pages",
-        icon: PageIcon,
-        subItems: [
-          { name: "Black Page", path: "/blank", pro: false },
-          { name: "404 Page", path: "/error-404", pro: false },
-        ],
+        name: "داشبورد",
+        path: "/",
       },
     ],
   },
   {
-    title: "Others",
+    title: "مصاحبه",
     items: [
       {
         icon: PieChartIcon,
-        name: "Charts",
+        name: "مصاحبه",
         subItems: [
-          { name: "Line Chart", path: "/line-chart", pro: false },
-          { name: "Bar Chart", path: "/bar-chart", pro: false },
+          { name: "سؤالات", path: "/Interview", pro: false, new: false },
         ],
-      },
-      {
-        icon: BoxCubeIcon,
-        name: "Ui Elements",
-        subItems: [
-          { name: "Alerts", path: "/alerts", pro: false },
-          { name: "Avatars", path: "/avatars", pro: false },
-          { name: "Badge", path: "/badge", pro: false },
-          { name: "Buttons", path: "/buttons", pro: false },
-          { name: "Images", path: "/images", pro: false },
-          { name: "Videos", path: "/videos", pro: false },
-        ],
-      },
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
-        ],
-      },
-      // ... Add other menu items here
+      }
     ],
   },
 ];
 
-const isActive = (path) => route.path === path;
+const isActive = (path: string) => route.path === path;
 
-const toggleSubmenu = (groupIndex, itemIndex) => {
+const toggleSubmenu = (groupIndex: number, itemIndex: number) => {
   const key = `${groupIndex}-${itemIndex}`;
   openSubmenu.value = openSubmenu.value === key ? null : key;
 };
@@ -332,26 +287,29 @@ const isAnySubmenuRouteActive = computed(() => {
   );
 });
 
-const isSubmenuOpen = (groupIndex, itemIndex) => {
+const isSubmenuOpen = (groupIndex: number, itemIndex: number) => {
   const key = `${groupIndex}-${itemIndex}`;
+  const item = menuGroups[groupIndex].items[itemIndex];
   return (
     openSubmenu.value === key ||
     (isAnySubmenuRouteActive.value &&
-      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
+      item.subItems?.some((subItem: SubItem) =>
         isActive(subItem.path)
       ))
   );
 };
 
-const startTransition = (el) => {
-  el.style.height = "auto";
-  const height = el.scrollHeight;
-  el.style.height = "0px";
-  el.offsetHeight; // force reflow
-  el.style.height = height + "px";
+const startTransition = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = "auto";
+  const height = htmlEl.scrollHeight;
+  htmlEl.style.height = "0px";
+  void htmlEl.offsetHeight; // force reflow
+  htmlEl.style.height = height + "px";
 };
 
-const endTransition = (el) => {
-  el.style.height = "";
+const endTransition = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = "";
 };
 </script>

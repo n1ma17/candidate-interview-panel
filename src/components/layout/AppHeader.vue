@@ -11,7 +11,7 @@
           class="flex items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
           :class="[
             isMobileOpen
-              ? 'lg:bg-transparent dark:lg:bg-transparent bg-gray-100 dark:bg-gray-800'
+              ? 'lg:bg-transparent dark:lg:bg-transparent bg-gray-100 dark:bg-primary'
               : '',
           ]"
         >
@@ -50,7 +50,7 @@
         <HeaderLogo />
         <button
           @click="toggleApplicationMenu"
-          class="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
+          class="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-primary lg:hidden"
         >
           <svg
             width="24"
@@ -67,7 +67,6 @@
             />
           </svg>
         </button>
-        <SearchBar />
       </div>
 
       <div
@@ -76,7 +75,7 @@
       >
         <div class="flex items-center gap-2 2xsm:gap-3">
           <ThemeToggler />
-          <NotificationMenu />
+          <!-- <NotificationMenu /> -->
         </div>
         <UserMenu />
       </div>
@@ -88,9 +87,8 @@
 import { ref } from 'vue'
 import { useSidebar } from '@/composables/useSidebar'
 import ThemeToggler from '../common/ThemeToggler.vue'
-import SearchBar from './header/SearchBar.vue'
 import HeaderLogo from './header/HeaderLogo.vue'
-import NotificationMenu from './header/NotificationMenu.vue'
+// import NotificationMenu from './header/NotificationMenu.vue'
 import UserMenu from './header/UserMenu.vue'
 
 const { toggleSidebar, toggleMobileSidebar, isMobileOpen } = useSidebar()
@@ -101,14 +99,6 @@ const handleToggle = () => {
   } else {
     toggleMobileSidebar()
   }
-}
-
-const dropdownOpen = ref(false)
-const notifying = ref(false)
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
-  notifying.value = false
 }
 
 const isApplicationMenuOpen = ref(false)
