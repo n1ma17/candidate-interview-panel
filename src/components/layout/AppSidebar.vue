@@ -221,7 +221,7 @@ import { useRoute } from "vue-router";
 
 import {
   GridIcon,
-  PieChartIcon,
+  // PieChartIcon,
   ChevronDownIcon,
   HorizontalDots,
 } from "../../icons";
@@ -257,18 +257,18 @@ const menuGroups: { title: string; items: MenuItem[] }[] = [
       },
     ],
   },
-  {
-    title: "مصاحبه",
-    items: [
-      {
-        icon: PieChartIcon,
-        name: "مصاحبه",
-        subItems: [
-          { name: "سؤالات", path: "/Interview", pro: false, new: false },
-        ],
-      }
-    ],
-  },
+  // {
+  //   title: "مصاحبه",
+  //   items: [
+  //     {
+  //       icon: PieChartIcon,
+  //       name: "مصاحبه",
+  //       subItems: [
+  //         { name: "سؤالات", path: "/Interview", pro: false, new: false },
+  //       ],
+  //     }
+  //   ],
+  // },
 ];
 
 const isActive = (path: string) => route.path === path;

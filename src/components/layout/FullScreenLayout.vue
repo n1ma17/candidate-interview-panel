@@ -1,9 +1,16 @@
 <template>
-  <div class="min-h-screen">
-    <main>
-      <slot></slot>
-    </main>
+  <div class="min-h-screen xl:flex">
+  <FullScreenHeader />
+  <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+    <slot></slot>
+  </div>
+
+    <!-- Toast Container -->
+    <ToastComponent />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import FullScreenHeader from './FullScreenHeader.vue'
+import ToastComponent from '../common/ToastComponent.vue'
+</script>

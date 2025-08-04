@@ -40,7 +40,7 @@
     <div
       v-if="currentQuestion"
       :class="[
-        'question-box mt-3 min-h-[160px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5',
+        'question-box mt-3 min-h-[200px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5',
         state.isRecording
           ? 'border-red-500 shadow-lg shadow-red-500/20'
           : 'border-gray-200 dark:border-gray-800',
@@ -62,52 +62,81 @@
             </div>
           </div>
 
-          <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-2 text-left">
+          <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-8 text-left">
             {{ currentQuestion.description }}
           </h3>
-
-          <!-- Video Display -->
-          <div class="relative w-full">
-            <div class="relative w-full h-100 bg-gray-900 rounded-lg overflow-hidden">
-              <video
-                ref="previewVideo"
-                autoplay
-                muted
-                playsinline
-                class="absolute inset-0 w-full h-full object-cover"
-                :class="[
-                  state.isRecording ? 'border-2 border-red-500' : 'border-2 border-gray-300',
-                ]"
-                @loadedmetadata="() => console.log('Video metadata loaded')"
-                @canplay="() => console.log('Video can play')"
-                @playing="() => console.log('Video is playing')"
-              ></video>
+          <div class="flex items-center gap-4 w-full h-full">
+            <div class="w-[50%] h-100">
+              <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-full flex flex-col justify-between">
+                <textarea
+                  v-model="notes"
+                  placeholder="یادداشت‌های خود را اینجا بنویسید..."
+                  class="w-full h-[calc(100%-40px)] min-h-[200px] p-3 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                ></textarea>
+                <div class="flex items-center justify-end mt-2 h-[40px]">
+                  <button
+                    @click="saveNote"
+                    :disabled="!notes.trim()"
+                    class="flex items-center justify-center w-8 h-8 text-white bg-primary rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
+            <!-- Video Display -->
+            <div class="relative w-[50%]">
+              <div class="relative w-full h-100 bg-gray-900 rounded-lg overflow-hidden">
+                <video
+                  ref="previewVideo"
+                  autoplay
+                  muted
+                  playsinline
+                  class="absolute inset-0 w-full h-full object-cover"
+                  :class="[
+                    state.isRecording ? 'border-2 border-red-500' : 'border-2 border-gray-300',
+                  ]"
+                  @loadedmetadata="() => console.log('Video metadata loaded')"
+                  @canplay="() => console.log('Video can play')"
+                  @playing="() => console.log('Video is playing')"
+                ></video>
+              </div>
 
-            <!-- Recording indicators -->
-            <div
-              v-if="state.isRecording"
-              class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse z-10"
-            ></div>
-            <div
-              v-if="state.isRecording"
-              class="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
-            >
-              {{ formatTime(state.recordingTime) }}
-            </div>
+              <!-- Recording indicators -->
+              <div
+                v-if="state.isRecording"
+                class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse z-10"
+              ></div>
+              <div
+                v-if="state.isRecording"
+                class="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
+              >
+                {{ formatTime(state.recordingTime) }}
+              </div>
 
-            <!-- Ready indicator -->
-            <div
-              v-else-if="state.currentQuestionIndex >= 0"
-              class="absolute bottom-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
-            >
-              آماده
+              <!-- Ready indicator -->
+              <div
+                v-else-if="state.currentQuestionIndex >= 0"
+                class="absolute bottom-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
+              >
+                آماده
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div v-else class="question-box mt-3 h-[80px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5">
+    <div
+      v-else
+      class="question-box mt-3 h-[80px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5"
+    >
       <span class="text-gray-500 dark:text-gray-400">برای شروع مصاحبه روی دکمه شروع کلیک کنید</span>
     </div>
 
@@ -264,6 +293,16 @@ const state = ref({
   recordingInterval: null as number | null,
   recordingChunks: [] as Blob[],
   responses: [] as QuestionResponse[],
+})
+
+// Notes for the interview
+const notes = ref('')
+const questionNotes = ref<Record<number, string[]>>({})
+
+// Computed property for current question notes
+const currentQuestionNotes = computed(() => {
+  if (!currentQuestion.value) return []
+  return questionNotes.value[currentQuestion.value.id] || []
 })
 
 // Modal States
@@ -520,6 +559,24 @@ const saveQuestionResponse = (videoBlob: Blob) => {
 
   state.value.responses.push(response)
   emit('question-answered', response)
+}
+
+// Save note function
+const saveNote = () => {
+  if (!currentQuestion.value || !notes.value.trim()) return
+
+  const questionId = currentQuestion.value.id
+  if (!questionNotes.value[questionId]) {
+    questionNotes.value[questionId] = []
+  }
+
+  questionNotes.value[questionId].push(notes.value.trim())
+  notes.value = '' // Clear the textarea after saving
+
+  toast.success({
+    title: 'یادداشت ذخیره شد',
+    description: 'یادداشت شما با موفقیت ذخیره شد',
+  })
 }
 
 // Interview Flow

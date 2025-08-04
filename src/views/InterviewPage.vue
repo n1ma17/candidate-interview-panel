@@ -1,6 +1,6 @@
 <template>
-  <AdminLayout>
-    <PageBreadcrumb :pageTitle="currentPageTitle" />
+  <FullScreenLayout>
+    <PageBreadcrumb :pageTitle="currentPageTitle" disabled />
 
     <!-- Interview Video Recorder Component -->
     <InterviewVideoRecorder
@@ -9,12 +9,12 @@
       @question-answered="handleQuestionAnswered"
       @interview-completed="handleInterviewCompleted"
     />
-  </AdminLayout>
+  </FullScreenLayout>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import AdminLayout from '@/components/layout/AdminLayout.vue'
+import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import InterviewVideoRecorder from '@/components/InterviewVideoRecorder.vue'
 import { useRouter } from 'vue-router'
