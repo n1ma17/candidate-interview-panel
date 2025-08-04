@@ -85,7 +85,7 @@
             <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
               <slot name="footer" :handleConfirm="handleConfirm" :handleCancel="handleCancel">
                 <!-- Default Footer -->
-                <div class="flex items-center justify-end gap-3">
+                <div v-if="showButtons" class="flex items-center justify-end gap-3">
                   <button
                     @click="handleCancel"
                     class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
@@ -114,7 +114,8 @@ interface Props {
   title?: string
   description?: string
   confirmText?: string
-  cancelText?: string
+  cancelText?: string,
+  showButtons?: boolean
 }
 
 interface Emits {
@@ -128,6 +129,7 @@ const props = withDefaults(defineProps<Props>(), {
   description: 'برای ادامه، نیاز به دسترسی‌های زیر داریم:',
   confirmText: 'اجازه می‌دهم',
   cancelText: 'انصراف',
+  showButtons: true,
 })
 
 const emit = defineEmits<Emits>()
