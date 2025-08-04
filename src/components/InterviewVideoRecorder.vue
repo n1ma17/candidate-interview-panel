@@ -38,14 +38,15 @@
 
     <!-- Question Section -->
     <div
-              :class="[
-          'question-box mt-3 min-h-[120px] rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5',
-          state.isRecording
-            ? 'border-red-500 shadow-lg shadow-red-500/20'
-            : 'border-gray-200 dark:border-gray-800',
-        ]"
+      v-if="currentQuestion"
+      :class="[
+        'question-box mt-3 min-h-[160px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5',
+        state.isRecording
+          ? 'border-red-500 shadow-lg shadow-red-500/20'
+          : 'border-gray-200 dark:border-gray-800',
+      ]"
     >
-      <div class="w-full text-center">
+      <div class="w-full text-center h-full">
         <div v-if="currentQuestion" class="space-y-4">
           <div class="flex items-center justify-between mb-6">
             <span class="text-sm text-gray-500 dark:text-gray-400">
@@ -61,7 +62,7 @@
             </div>
           </div>
 
-          <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-2  text-left">
+          <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-2 text-left">
             {{ currentQuestion.description }}
           </h3>
 
@@ -75,7 +76,7 @@
                 playsinline
                 class="absolute inset-0 w-full h-full object-cover"
                 :class="[
-                  state.isRecording ? 'border-2 border-red-500' : 'border-2 border-gray-300'
+                  state.isRecording ? 'border-2 border-red-500' : 'border-2 border-gray-300',
                 ]"
                 @loadedmetadata="() => console.log('Video metadata loaded')"
                 @canplay="() => console.log('Video can play')"
@@ -84,18 +85,30 @@
             </div>
 
             <!-- Recording indicators -->
-            <div v-if="state.isRecording" class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse z-10"></div>
-            <div v-if="state.isRecording" class="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-medium z-10">
+            <div
+              v-if="state.isRecording"
+              class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse z-10"
+            ></div>
+            <div
+              v-if="state.isRecording"
+              class="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
+            >
               {{ formatTime(state.recordingTime) }}
             </div>
 
             <!-- Ready indicator -->
-            <div v-else-if="state.currentQuestionIndex >= 0" class="absolute bottom-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium z-10">
+            <div
+              v-else-if="state.currentQuestionIndex >= 0"
+              class="absolute bottom-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
+            >
               آماده
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-else class="question-box mt-3 h-[80px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5">
+      <span class="text-gray-500 dark:text-gray-400">برای شروع مصاحبه روی دکمه شروع کلیک کنید</span>
     </div>
 
     <!-- Hidden video element for recording -->
@@ -114,9 +127,21 @@
       <template #content>
         <div class="space-y-3">
           <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30">
-              <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            <div
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30"
+            >
+              <svg
+                class="w-4 h-4 text-blue-600 dark:text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
               </svg>
             </div>
             <div>
@@ -126,9 +151,21 @@
           </div>
 
           <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30">
-              <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            <div
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30"
+            >
+              <svg
+                class="w-4 h-4 text-green-600 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                />
               </svg>
             </div>
             <div>
@@ -226,7 +263,7 @@ const state = ref({
   mediaRecorder: null as MediaRecorder | null,
   recordingInterval: null as number | null,
   recordingChunks: [] as Blob[],
-  responses: [] as QuestionResponse[]
+  responses: [] as QuestionResponse[],
 })
 
 // Modal States
@@ -235,7 +272,7 @@ const modals = ref({
   showCountdownModal: false,
   showWaitingModal: false,
   countdownTime: 5,
-  waitingTime: 5
+  waitingTime: 5,
 })
 
 // Refs
@@ -244,7 +281,10 @@ const recordingVideo = ref<HTMLVideoElement>()
 
 // Computed Properties
 const currentQuestion = computed(() => {
-  if (state.value.currentQuestionIndex >= 0 && state.value.currentQuestionIndex < props.questions.length) {
+  if (
+    state.value.currentQuestionIndex >= 0 &&
+    state.value.currentQuestionIndex < props.questions.length
+  ) {
     return props.questions[state.value.currentQuestionIndex]
   }
   return null
@@ -292,12 +332,29 @@ const getMediaStream = async (): Promise<MediaStream | null> => {
   // Try legacy APIs
   try {
     const nav = navigator as Navigator & {
-      getUserMedia?: (constraints: MediaStreamConstraints, success: (stream: MediaStream) => void, error: (error: Error) => void) => void
-      webkitGetUserMedia?: (constraints: MediaStreamConstraints, success: (stream: MediaStream) => void, error: (error: Error) => void) => void
-      mozGetUserMedia?: (constraints: MediaStreamConstraints, success: (stream: MediaStream) => void, error: (error: Error) => void) => void
-      msGetUserMedia?: (constraints: MediaStreamConstraints, success: (stream: MediaStream) => void, error: (error: Error) => void) => void
+      getUserMedia?: (
+        constraints: MediaStreamConstraints,
+        success: (stream: MediaStream) => void,
+        error: (error: Error) => void,
+      ) => void
+      webkitGetUserMedia?: (
+        constraints: MediaStreamConstraints,
+        success: (stream: MediaStream) => void,
+        error: (error: Error) => void,
+      ) => void
+      mozGetUserMedia?: (
+        constraints: MediaStreamConstraints,
+        success: (stream: MediaStream) => void,
+        error: (error: Error) => void,
+      ) => void
+      msGetUserMedia?: (
+        constraints: MediaStreamConstraints,
+        success: (stream: MediaStream) => void,
+        error: (error: Error) => void,
+      ) => void
     }
-    const getUserMedia = nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia || nav.msGetUserMedia
+    const getUserMedia =
+      nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia || nav.msGetUserMedia
 
     if (getUserMedia) {
       return new Promise<MediaStream>((resolve, reject) => {
@@ -327,7 +384,7 @@ const setupVideoPreview = async (stream: MediaStream): Promise<boolean> => {
     previewVideo.value.srcObject = stream
 
     // Wait a bit for the stream to be ready
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
 
     // Check if video element is ready
     if (previewVideo.value.readyState >= 2) {
@@ -346,7 +403,7 @@ const setupVideoPreview = async (stream: MediaStream): Promise<boolean> => {
     } catch (playError) {
       console.log('Auto-play failed, but video should still work:', playError)
       // Force play on user interaction
-      previewVideo.value.play().catch(e => console.log('Manual play also failed:', e))
+      previewVideo.value.play().catch((e) => console.log('Manual play also failed:', e))
     }
 
     return true
@@ -422,7 +479,7 @@ const stopRecording = async () => {
     state.value.isRecording = false
     stopTimer()
 
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500))
 
     toast.success({
       title: 'ضبط متوقف شد',
@@ -498,7 +555,7 @@ const finishInterview = async () => {
 
   // Clean up
   if (state.value.mediaStream) {
-    state.value.mediaStream.getTracks().forEach(track => track.stop())
+    state.value.mediaStream.getTracks().forEach((track) => track.stop())
     state.value.mediaStream = null
   }
 
@@ -589,7 +646,7 @@ onUnmounted(() => {
     clearInterval(state.value.recordingInterval)
   }
   if (state.value.mediaStream) {
-    state.value.mediaStream.getTracks().forEach(track => track.stop())
+    state.value.mediaStream.getTracks().forEach((track) => track.stop())
   }
 })
 
@@ -602,7 +659,7 @@ const checkVideoStatus = () => {
       paused: previewVideo.value.paused,
       currentTime: previewVideo.value.currentTime,
       videoWidth: previewVideo.value.videoWidth,
-      videoHeight: previewVideo.value.videoHeight
+      videoHeight: previewVideo.value.videoHeight,
     })
   }
 }
@@ -610,11 +667,8 @@ const checkVideoStatus = () => {
 // Expose methods
 defineExpose({
   startInterview,
-  checkVideoStatus
+  checkVideoStatus,
 })
 </script>
 
 <style></style>
-
-
-
