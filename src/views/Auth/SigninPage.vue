@@ -1,10 +1,10 @@
 <template>
-  <FullScreenLayout>
+  <AuthLayout>
     <div class="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
       <div
         class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900"
       >
-        <div class="flex flex-col flex-1 w-full lg:w-1/2">
+        <div class="flex flex-col flex-1 w-full lg:w-1/2 bg-brand-950 dark:bg-white/5">
           <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
               <div class="mb-5 sm:mb-8">
@@ -18,9 +18,11 @@
                 </p>
               </div>
               <div>
-
                 <!-- Error message -->
-                <div v-if="error" class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+                <div
+                  v-if="error"
+                  class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
+                >
                   {{ error }}
                 </div>
 
@@ -142,7 +144,6 @@
                           مرا به خاطر بسپار
                         </label>
                       </div>
-
                     </div>
                     <!-- Button -->
                     <div>
@@ -151,9 +152,25 @@
                         :disabled="isLoading || !email || !password"
                         class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <svg v-if="isLoading" class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          v-if="isLoading"
+                          class="w-4 h-4 mr-2 animate-spin"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         {{ isLoading ? 'در حال ورود...' : 'ورود' }}
                       </button>
@@ -165,28 +182,23 @@
           </div>
         </div>
         <div
-          class="relative items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid"
+          class="relative items-center hidden w-full h-full lg:w-1/2  lg:grid"
         >
           <div class="flex items-center justify-center z-1">
             <common-grid-shape />
             <div class="flex flex-col items-center max-w-xs">
-              <router-link to="/" class="block mb-4">
-                <img width="{231}" height="{48}" src="/images/logo/auth-logo.svg" alt="Logo" />
-              </router-link>
-              <p class="text-center text-gray-400 dark:text-white/60">
-                قالب پنل مدیریتی رایگان و متن‌باز بر پایه Tailwind CSS
-              </p>
+              <img width="{231}" height="{48}" src="/images/logo/logo-en.jpg" alt="Logo" class="mb-4" />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </FullScreenLayout>
+  </AuthLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
+import AuthLayout from '@/components/layout/AuthLayout.vue'
 import { useAuth } from '@/composables/useAuth'
 
 const { login, isLoading, error, clearError } = useAuth()

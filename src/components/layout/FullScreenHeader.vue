@@ -5,8 +5,8 @@
     <div class="flex items-center justify-between w-full px-6 py-4">
       <!-- Logo Section -->
       <div class="flex items-center">
-        <img class="dark:hidden h-8" src="/images/logo/logo.svg" alt="Logo" />
-        <img class="hidden dark:block h-8" src="/images/logo/logo-dark.svg" alt="Logo" />
+        <img class="dark:hidden h-16" src="/images/logo/logo-en.jpg" alt="Logo" />
+        <img class="hidden dark:block h-16" src="/images/logo/logo-en.jpg" alt="Logo" />
       </div>
 
       <!-- User Section -->
