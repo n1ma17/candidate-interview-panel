@@ -72,7 +72,7 @@ onMounted(() => {
 
 // Event Handlers
 const handleQuestionAnswered = (response: QuestionResponse) => {
-  console.log('Question answered:', response)
+  console.log(`Question answered:${response.questionId}`, response)
   responses.value.push(response)
 }
 
@@ -94,33 +94,14 @@ const handleInterviewCompleted = (allResponses: QuestionResponse[]) => {
     }
 
     localStorage.setItem('completeInterview', JSON.stringify(interviewData))
-    console.log('Interview data saved to localStorage:', interviewData)
   } catch (error) {
     console.error('Error saving to localStorage:', error)
   }
 
-  // Show responses
-  showResponses()
-
   // Return to home after 2 seconds
   setTimeout(() => {
     router.push('/')
-  }, 2000)
-}
-
-// Utility functions
-const showResponses = () => {
-  console.log('Responses Array:', responses.value)
-  responses.value.forEach((response, index) => {
-    console.log(`Response ${index + 1}:`, {
-      questionNumber: response.questionNumber,
-      questionTitle: response.questionTitle,
-      duration: response.duration,
-      hasVideo: !!response.videoBlob,
-      hasAudio: !!response.audioBlob,
-      timestamp: response.timestamp,
-    })
-  })
+  }, 500)
 }
 
 const checkLocalStorage = () => {

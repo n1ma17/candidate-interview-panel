@@ -266,7 +266,8 @@ interface QuestionResponse {
   audioBlob: Blob | null
   transcript: string
   duration: number
-  timestamp: Date
+  timestamp: Date,
+  note: string[] | null | []
 }
 
 // Props
@@ -298,12 +299,6 @@ const state = ref({
 // Notes for the interview
 const notes = ref('')
 const questionNotes = ref<Record<number, string[]>>({})
-
-// Computed property for current question notes
-const currentQuestionNotes = computed(() => {
-  if (!currentQuestion.value) return []
-  return questionNotes.value[currentQuestion.value.id] || []
-})
 
 // Modal States
 const modals = ref({
@@ -555,6 +550,7 @@ const saveQuestionResponse = (videoBlob: Blob) => {
     transcript: '',
     duration: state.value.recordingTime,
     timestamp: new Date(),
+    note: questionNotes.value[currentQuestion.value?.id || 0] || null
   }
 
   state.value.responses.push(response)
