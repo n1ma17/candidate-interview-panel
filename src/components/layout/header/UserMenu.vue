@@ -5,13 +5,13 @@
       @click.prevent="toggleDropdown"
     >
       <span
-        class="mr-3 flex items-center justify-center rounded-full h-11 w-11 text-white font-medium text-lg"
+        class="mr-3 flex items-center justify-center rounded-full h-9 w-9 text-white font-medium text-xs"
         :style="{ backgroundColor: avatarColor }"
       >
         {{ userInitials }}
       </span>
 
-      <span class="block mr-2 font-medium text-theme-sm">{{ user?.name || 'کاربر' }} </span>
+      <span class="block mr-2 font-medium text-theme-sm">{{ user?.name || 'user' }} </span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" class="mr-1" />
     </button>
@@ -23,7 +23,7 @@
     >
       <div>
         <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          {{ user?.name || 'کاربر گرامی' }}
+          {{ user?.name || 'user' }}
         </span>
         <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
           {{ user?.email || 'user@example.com' }}
@@ -71,7 +71,7 @@ const { user, logout } = useAuth()
 
 // Computed property for user initials
 const userInitials = computed(() => {
-  if (!user.value?.name) return 'کا' // Default Persian initials for "کاربر"
+  if (!user.value?.name) return 'US' // Default Persian initials for "کاربر"
 
   const name = user.value.name.trim()
   const words = name.split(' ')
