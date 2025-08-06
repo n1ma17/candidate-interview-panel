@@ -4,16 +4,16 @@
       <div
         class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900"
       >
-        <div class="flex flex-col flex-1 w-full lg:w-1/2 bg-brand-950 dark:bg-white/5">
+        <div class="flex flex-col flex-1 w-full lg:w-1/2 bg-brand-950  dark:bg-white/5">
           <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
               <div class="mb-5 sm:mb-8">
                 <h1
-                  class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md"
+                  class="mb-2 font-semibold text-gray-100 text-title-sm dark:text-white/90 sm:text-title-md"
                 >
                   ورود به سیستم
                 </h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-gray-400 dark:text-gray-400">
                   ایمیل و رمز عبور خود را وارد کنید!
                 </p>
               </div>
@@ -32,7 +32,7 @@
                     <div>
                       <label
                         for="email"
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
                       >
                         ایمیل<span class="text-error-500">*</span>
                       </label>
@@ -42,14 +42,14 @@
                         id="email"
                         name="email"
                         placeholder="info@gmail.com"
-                        class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                       />
                     </div>
                     <!-- Password -->
                     <div>
                       <label
                         for="password"
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
                       >
                         رمز عبور<span class="text-error-500">*</span>
                       </label>
@@ -59,7 +59,7 @@
                           :type="showPassword ? 'text' : 'password'"
                           id="password"
                           placeholder="رمز عبور خود را وارد کنید"
-                          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                         />
                         <span
                           @click="togglePasswordVisibility"
@@ -105,7 +105,7 @@
                       <div>
                         <label
                           for="keepLoggedIn"
-                          class="flex items-center text-sm font-normal text-gray-700 cursor-pointer select-none dark:text-gray-400"
+                          class="flex items-center text-sm font-normal text-gray-100 cursor-pointer select-none dark:text-gray-400"
                         >
                           <div class="relative ml-3">
                             <input
