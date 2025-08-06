@@ -220,8 +220,6 @@ import { computed, type Component } from "vue";
 import { useRoute } from "vue-router";
 
 import {
-  GridIcon,
-  // PieChartIcon,
   ChevronDownIcon,
   HorizontalDots,
 } from "../../icons";
@@ -251,7 +249,7 @@ const menuGroups: { title: string; items: MenuItem[] }[] = [
     title: "منو اصلی",
     items: [
       {
-        icon: GridIcon,
+        icon: HorizontalDots,
         name: "داشبورد",
         path: "/",
       },

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, onMounted, watch, computed, type ComputedRef } from 'vue'
+import { ref, provide, onMounted, watch, computed } from 'vue'
 
 type Theme = 'light' | 'dark'
 
@@ -42,7 +42,8 @@ provide('theme', {
 </script>
 
 <script lang="ts">
-import { inject, type ComputedRef } from 'vue'
+import { inject } from 'vue'
+import type { ComputedRef } from 'vue'
 
 interface ThemeContext {
   isDarkMode: ComputedRef<boolean>
