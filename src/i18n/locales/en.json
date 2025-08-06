@@ -1,0 +1,99 @@
+{
+  "common": {
+    "start": "Start",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "ready": "Ready",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "interview": {
+    "title": "Interview",
+    "startInterview": "Start Interview",
+    "nextQuestion": "Next Question",
+    "finishInterview": "Finish Interview",
+    "endAnswer": "End Answer",
+    "question": "Question",
+    "of": "of",
+    "ready": "Ready",
+    "recordingStarted": "Recording Started",
+    "recordingStopped": "Recording Stopped",
+    "recordingDescription": "Provide your answer (video and audio)",
+    "recordingSaved": "Your answer has been saved (video and audio)",
+    "interviewCompleted": "Interview Completed! 🎉",
+    "interviewCompletedDesc": "Your answers have been successfully saved.",
+    "waitingForNextQuestion": "Preparing for Next Question",
+    "waitingDescription": "Please wait while the next question is being prepared...",
+    "preparingInterview": "Preparing to Start Interview",
+    "preparingDescription": "Please wait while the system is being prepared...",
+    "interviewStarting": "Interview is starting...",
+    "nextQuestionPreparing": "Next question is being prepared..."
+  },
+  "questions": {
+    "personalIntroduction": {
+      "title": "Personal Introduction",
+      "description": "Please introduce yourself and talk about your work experience and education. (Maximum 2 minutes)"
+    },
+    "motivation": {
+      "title": "Motivation and Interest",
+      "description": "Why are you interested in this job/position and what makes you suitable for this role? (Maximum 2 minutes)"
+    },
+    "challengingExperience": {
+      "title": "Challenging Experience",
+      "description": "Tell us about a challenging problem you faced at work or in your studies and how you solved it. (Maximum 3 minutes)"
+    }
+  },
+  "permissions": {
+    "title": "Camera and Microphone Access",
+    "description": "To start the interview, you need access to camera and microphone. These permissions are used for recording video and audio during the interview.",
+    "allow": "Allow",
+    "deny": "Deny",
+    "cameraAccess": "Camera Access",
+    "cameraDescription": "For recording video during the interview",
+    "microphoneAccess": "Microphone Access",
+    "microphoneDescription": "For recording audio during the interview",
+    "separateRecording": "Both video and audio are recorded and saved separately",
+    "accessGranted": "Access Granted Successfully! 🎉",
+    "accessGrantedDesc": "Preparing to start interview...",
+    "accessError": "Access Error",
+    "accessErrorDesc": "Please connect your camera and try again.",
+    "accessCancelled": "Access Cancelled",
+    "accessCancelledDesc": "You need camera and microphone access to start the interview."
+  },
+  "notes": {
+    "placeholder": "Write your notes here...",
+    "save": "Note Saved",
+    "saveDesc": "Your note has been successfully saved"
+  },
+  "errors": {
+    "recordingStart": "Recording Start Error",
+    "recordingStartDesc": "There was a problem starting the recording",
+    "recordingStop": "Recording Stop Error",
+    "recordingStopDesc": "There was a problem stopping the recording"
+  },
+  "home": {
+    "title": "Interview Description",
+    "description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "description2": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "description3": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "startProcess": "Start Interview Process",
+    "interviewCompleted": "Your interview has been completed successfully",
+    "resultNotification": "Results will be notified to you as soon as possible"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "profile": "Edit Profile",
+    "settings": "Account Settings",
+    "support": "Support",
+    "logout": "Logout"
+  }
+} 

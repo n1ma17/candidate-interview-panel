@@ -50,7 +50,7 @@
         <div v-if="currentQuestion" class="space-y-4">
           <div class="flex items-center justify-between mb-6">
             <span class="text-sm text-gray-500 dark:text-gray-400">
-              سوال {{ state.currentQuestionIndex + 1 }} از {{ questions.length }}
+              {{ t('interview.question') }} {{ state.currentQuestionIndex + 1 }} {{ t('interview.of') }} {{ questions.length }}
             </span>
             <div class="flex items-center gap-2">
               <div
@@ -70,7 +70,7 @@
               <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 h-full flex flex-col justify-between">
                 <textarea
                   v-model="notes"
-                  placeholder="یادداشت‌های خود را اینجا بنویسید..."
+                  :placeholder="t('notes.placeholder')"
                   class="w-full h-[calc(100%-40px)] min-h-[200px] p-3 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                 ></textarea>
                 <div class="flex items-center justify-end mt-2 h-[40px]">
@@ -136,7 +136,7 @@
                 v-else-if="state.currentQuestionIndex >= 0"
                 class="absolute bottom-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
               >
-                آماده
+                {{ t('interview.ready') }}
               </div>
             </div>
           </div>
@@ -147,7 +147,7 @@
       v-else
       class="question-box mt-3 h-[80px] h-full rounded-2xl border transition-all duration-300 bg-white px-5 py-4 dark:bg-white/[0.03] xl:px-10 xl:py-5"
     >
-      <span class="text-gray-500 dark:text-gray-400">برای شروع مصاحبه روی دکمه شروع کلیک کنید</span>
+      <span class="text-gray-500 dark:text-gray-400">{{ t('interview.startInterview') }}</span>
     </div>
 
     <!-- Hidden video element for recording -->
@@ -156,10 +156,10 @@
     <!-- Permission Modal -->
     <ModalComponent
       v-model="modals.showPermissionModal"
-      title="دسترسی به دوربین و میکروفون"
-      description="برای شروع مصاحبه، نیاز به دسترسی به دوربین و میکروفون دارید. این دسترسی‌ها برای ضبط ویدیو و صدا در حین مصاحبه استفاده می‌شود."
-      confirm-text="اجازه می‌دهم"
-      cancel-text="انصراف"
+      :title="t('permissions.title')"
+      :description="t('permissions.description')"
+      :confirm-text="t('permissions.allow')"
+      :cancel-text="t('permissions.deny')"
       @confirm="handlePermissionConfirm"
       @cancel="handlePermissionCancel"
     >
@@ -183,9 +183,9 @@
                 />
               </svg>
             </div>
-            <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">دسترسی به دوربین</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">برای ضبط ویدیو در حین مصاحبه</p>
+                        <div>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('permissions.cameraAccess') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('permissions.cameraDescription') }}</p>
             </div>
           </div>
 
@@ -208,8 +208,8 @@
               </svg>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">دسترسی به میکروفون</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">برای ضبط صدا در حین مصاحبه</p>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('permissions.microphoneAccess') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('permissions.microphoneDescription') }}</p>
             </div>
           </div>
 
@@ -219,7 +219,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <p class="text-sm text-blue-700 dark:text-blue-300">
-                هر دو ویدیو و صدا به صورت جداگانه ضبط و ذخیره می‌شوند
+                {{ t('permissions.separateRecording') }}
               </p>
             </div>
           </div>
@@ -230,8 +230,8 @@
     <!-- Countdown Modal -->
     <ModalComponent
       v-model="modals.showCountdownModal"
-      title="آماده‌سازی برای شروع مصاحبه"
-      description="لطفاً صبر کنید تا سیستم آماده شود..."
+      :title="t('interview.preparingInterview')"
+      :description="t('interview.preparingDescription')"
       :show-buttons="false"
     >
       <template #content>
@@ -240,7 +240,7 @@
             <div class="text-6xl font-bold text-red-600 dark:text-red-400 mb-4">
               {{ modals.countdownTime }}
             </div>
-            <p class="text-gray-600 dark:text-gray-300">مصاحبه در حال شروع است...</p>
+            <p class="text-gray-600 dark:text-gray-300">{{ t('interview.interviewStarting') }}</p>
           </div>
         </div>
       </template>
@@ -249,8 +249,8 @@
     <!-- Waiting Modal -->
     <ModalComponent
       v-model="modals.showWaitingModal"
-      title="آماده‌سازی برای سوال بعدی"
-      description="لطفاً صبر کنید تا سوال بعدی آماده شود..."
+      :title="t('interview.waitingForNextQuestion')"
+      :description="t('interview.waitingDescription')"
       :show-buttons="false"
     >
       <template #content>
@@ -259,7 +259,7 @@
             <div class="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-4">
               {{ modals.waitingTime }}
             </div>
-            <p class="text-gray-600 dark:text-gray-300">سوال بعدی در حال آماده‌سازی است...</p>
+            <p class="text-gray-600 dark:text-gray-300">{{ t('interview.nextQuestionPreparing') }}</p>
           </div>
         </div>
       </template>
@@ -269,6 +269,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ModalComponent from './common/ModalComponent.vue'
 import { toast } from '@/composables/useToast'
 
@@ -337,6 +338,9 @@ const modals = ref({
 const previewVideo = ref<HTMLVideoElement>()
 const recordingVideo = ref<HTMLVideoElement>()
 
+// i18n
+const { t } = useI18n()
+
 // Computed Properties
 const currentQuestion = computed(() => {
   if (
@@ -349,10 +353,10 @@ const currentQuestion = computed(() => {
 })
 
 const buttonText = computed(() => {
-  if (state.value.currentQuestionIndex === -1) return 'شروع مصاحبه'
-  if (state.value.isRecording) return 'پایان پاسخ'
-  if (state.value.currentQuestionIndex < props.questions.length - 1) return 'سوال بعدی'
-  return 'پایان مصاحبه'
+  if (state.value.currentQuestionIndex === -1) return t('interview.startInterview')
+  if (state.value.isRecording) return t('interview.endAnswer')
+  if (state.value.currentQuestionIndex < props.questions.length - 1) return t('interview.nextQuestion')
+  return t('interview.finishInterview')
 })
 
 // Utility Functions
@@ -576,14 +580,14 @@ const startRecording = async () => {
     startTimer()
 
     toast.success({
-      title: 'ضبط شروع شد',
-      description: 'پاسخ خود را ارائه دهید (ویدیو و صدا)',
+      title: t('interview.recordingStarted'),
+      description: t('interview.recordingDescription'),
     })
   } catch (error) {
     console.error('Recording error:', error)
     toast.error({
-      title: 'خطا در شروع ضبط',
-      description: 'مشکلی در شروع ضبط پیش آمد',
+      title: t('errors.recordingStart'),
+      description: t('errors.recordingStartDesc'),
     })
   } finally {
     state.value.isProcessing = false
@@ -610,8 +614,8 @@ const stopRecording = async () => {
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     toast.success({
-      title: 'ضبط متوقف شد',
-      description: 'پاسخ شما ذخیره شد (ویدیو و صدا)',
+      title: t('interview.recordingStopped'),
+      description: t('interview.recordingSaved'),
     })
 
     if (state.value.currentQuestionIndex >= props.questions.length - 1) {
@@ -623,8 +627,8 @@ const stopRecording = async () => {
   } catch (error) {
     console.error('Stop recording error:', error)
     toast.error({
-      title: 'خطا در توقف ضبط',
-      description: 'مشکلی در توقف ضبط پیش آمد',
+      title: t('errors.recordingStop'),
+      description: t('errors.recordingStopDesc'),
     })
   } finally {
     state.value.isProcessing = false
@@ -664,8 +668,8 @@ const saveNote = () => {
   notes.value = '' // Clear the textarea after saving
 
   toast.success({
-    title: 'یادداشت ذخیره شد',
-    description: 'یادداشت شما با موفقیت ذخیره شد',
+    title: t('notes.save'),
+    description: t('notes.saveDesc'),
   })
 }
 
@@ -697,8 +701,8 @@ const nextQuestion = async () => {
 
 const finishInterview = async () => {
   toast.success({
-    title: 'مصاحبه تکمیل شد! 🎉',
-    description: 'پاسخ‌های شما با موفقیت ذخیره شد.',
+    title: t('interview.interviewCompleted'),
+    description: t('interview.interviewCompletedDesc'),
   })
 
   // Clean up
@@ -736,24 +740,24 @@ const handlePermissionConfirm = async () => {
 
   if (videoStream) {
     toast.success({
-      title: 'دسترسی با موفقیت دریافت شد! 🎉',
-      description: 'آماده‌سازی برای شروع مصاحبه...',
+      title: t('permissions.accessGranted'),
+      description: t('permissions.accessGrantedDesc'),
     })
     modals.value.showPermissionModal = false
     modals.value.showCountdownModal = true
     startCountdown(videoStream, audioStream)
   } else {
     toast.error({
-      title: 'خطا در دریافت دسترسی',
-      description: 'لطفاً دوربین را وصل کنید و مجددا تلاش کنید.',
+      title: t('permissions.accessError'),
+      description: t('permissions.accessErrorDesc'),
     })
   }
 }
 
 const handlePermissionCancel = () => {
   toast.warning({
-    title: 'دسترسی لغو شد',
-    description: 'برای شروع مصاحبه نیاز به دسترسی به دوربین و میکروفون دارید.',
+    title: t('permissions.accessCancelled'),
+    description: t('permissions.accessCancelledDesc'),
   })
   modals.value.showPermissionModal = false
 }

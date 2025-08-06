@@ -12,31 +12,28 @@
             </svg>
           </div>
           <h3 class="font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-            مصاحبه شما با موفقیت انجام شد
+            {{ t('home.interviewCompleted') }}
           </h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-            نتیجه در سریع‌ترین زمان به شما اطلاع داده خواهد شد
+            {{ t('home.resultNotification') }}
           </p>
         </div>
 
         <!-- Original interview description -->
         <div v-else>
           <h3 class="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-            توضیحات مصاحبه
+            {{ t('home.title') }}
           </h3>
 
           <ul class="flex flex-col gap-2 text-right list-disc">
             <li class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-              لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-              است
+              {{ t('home.description1') }}
             </li>
             <li class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-              لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-              است
+              {{ t('home.description2') }}
             </li>
             <li class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-              لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-              است
+              {{ t('home.description3') }}
             </li>
           </ul>
         </div>
@@ -49,7 +46,7 @@
         @click="router.push('/interview')"
         class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-medium text-white shadow-lg transition-all duration-200 hover:bg-primary-hover hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
       >
-        شروع فرآیند مصاحبه
+        {{ t('home.startProcess') }}
       </button>
     </div>
   </admin-layout>
@@ -59,8 +56,10 @@
 import AdminLayout from '../components/layout/AdminLayout.vue'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t } = useI18n()
 const isInterviewCompleted = ref()
 
 onMounted(() => {

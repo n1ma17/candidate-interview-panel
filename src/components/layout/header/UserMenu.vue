@@ -52,7 +52,7 @@
         <LogoutIcon
           class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
         />
-        خروج از سیستم
+        {{ t('navigation.logout') }}
       </button>
     </div>
     <!-- Dropdown End -->
@@ -63,8 +63,10 @@
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
 import { RouterLink } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuth } from '@/composables/useAuth'
 
+const { t } = useI18n()
 const { user, logout } = useAuth()
 
 // Computed property for user initials
@@ -90,9 +92,9 @@ const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 
 const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'ویرایش پروفایل' },
-  { href: '/settings', icon: SettingsIcon, text: 'تنظیمات حساب کاربری' },
-  { href: '/support', icon: InfoCircleIcon, text: 'پشتیبانی' },
+  { href: '/profile', icon: UserCircleIcon, text: t('navigation.profile') },
+  { href: '/settings', icon: SettingsIcon, text: t('navigation.settings') },
+  { href: '/support', icon: InfoCircleIcon, text: t('navigation.support') },
 ]
 
 const toggleDropdown = () => {

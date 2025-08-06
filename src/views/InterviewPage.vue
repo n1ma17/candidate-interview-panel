@@ -14,11 +14,13 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import InterviewVideoRecorder from '@/components/InterviewVideoRecorder.vue'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const currentPageTitle = ref('interview')
 const router = useRouter()
 
@@ -29,21 +31,18 @@ const videoRecorderRef = ref()
 const questions = ref([
   {
     id: 1,
-    title: 'معرفی شخصی',
-    description:
-      'لطفاً خودتان را معرفی کنید و در مورد تجربه کاری و تحصیلات خود بگویید. (حداکثر 2 دقیقه)',
+    title: t('questions.personalIntroduction.title'),
+    description: t('questions.personalIntroduction.description'),
   },
   {
     id: 2,
-    title: 'انگیزه و علاقه',
-    description:
-      'چرا برای این شغل/موقعیت علاقه‌مند هستید و چه چیزی شما را برای این نقش مناسب می‌کند؟ (حداکثر 2 دقیقه)',
+    title: t('questions.motivation.title'),
+    description: t('questions.motivation.description'),
   },
   {
     id: 3,
-    title: 'تجربه چالش‌برانگیز',
-    description:
-      'در مورد یک چالش یا مشکل دشواری که در کار یا تحصیل با آن مواجه شده‌اید و چگونه آن را حل کردید، بگویید. (حداکثر 3 دقیقه)',
+    title: t('questions.challengingExperience.title'),
+    description: t('questions.challengingExperience.description'),
   },
 ])
 

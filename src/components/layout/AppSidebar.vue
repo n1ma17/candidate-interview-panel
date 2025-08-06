@@ -218,6 +218,7 @@
 <script setup lang="ts">
 import { computed, type Component } from "vue";
 import { useRoute } from "vue-router";
+import { useI18n } from 'vue-i18n';
 
 import {
   ChevronDownIcon,
@@ -241,6 +242,7 @@ interface MenuItem {
 }
 
 const route = useRoute();
+const { t } = useI18n();
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
 
@@ -250,7 +252,7 @@ const menuGroups: { title: string; items: MenuItem[] }[] = [
     items: [
       {
         icon: HorizontalDots,
-        name: "داشبورد",
+        name: t('navigation.dashboard'),
         path: "/",
       },
     ],
