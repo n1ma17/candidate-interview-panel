@@ -112,8 +112,18 @@
               <!-- Recording indicators -->
               <div
                 v-if="state.isRecording"
-                class="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse z-10"
-              ></div>
+                class="absolute top-2 right-2 flex items-center gap-1 z-10"
+              >
+                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div class="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                  </svg>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                  </svg>
+                </div>
+              </div>
               <div
                 v-if="state.isRecording"
                 class="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-medium z-10"
@@ -147,7 +157,7 @@
     <ModalComponent
       v-model="modals.showPermissionModal"
       title="دسترسی به دوربین و میکروفون"
-      description="برای شروع مصاحبه، نیاز به دسترسی به دوربین و میکروفون دارید. این دسترسی‌ها برای ضبط و ارزیابی مصاحبه شما استفاده می‌شود."
+      description="برای شروع مصاحبه، نیاز به دسترسی به دوربین و میکروفون دارید. این دسترسی‌ها برای ضبط ویدیو و صدا در حین مصاحبه استفاده می‌شود."
       confirm-text="اجازه می‌دهم"
       cancel-text="انصراف"
       @confirm="handlePermissionConfirm"
@@ -200,6 +210,17 @@
             <div>
               <p class="text-sm font-medium text-gray-900 dark:text-white">دسترسی به میکروفون</p>
               <p class="text-xs text-gray-500 dark:text-gray-400">برای ضبط صدا در حین مصاحبه</p>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-sm text-blue-700 dark:text-blue-300">
+                هر دو ویدیو و صدا به صورت جداگانه ضبط و ذخیره می‌شوند
+              </p>
             </div>
           </div>
         </div>
@@ -290,9 +311,12 @@ const state = ref({
   isProcessing: false,
   recordingTime: 0,
   mediaStream: null as MediaStream | null,
+  audioStream: null as MediaStream | null,
   mediaRecorder: null as MediaRecorder | null,
+  audioRecorder: null as MediaRecorder | null,
   recordingInterval: null as number | null,
   recordingChunks: [] as Blob[],
+  audioChunks: [] as Blob[],
   responses: [] as QuestionResponse[],
 })
 
@@ -353,53 +377,88 @@ const stopTimer = () => {
 }
 
 // Media Stream Management
-const getMediaStream = async (): Promise<MediaStream | null> => {
+const getMediaStream = async (): Promise<{ videoStream: MediaStream | null, audioStream: MediaStream | null }> => {
+  let videoStream: MediaStream | null = null
+  let audioStream: MediaStream | null = null
+
   try {
-    // Try modern API
+    // Try to get video and audio streams separately for better control
     if (navigator.mediaDevices?.getUserMedia) {
-      return await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      try {
+        // Get video stream
+        videoStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false
+        })
+      } catch (error) {
+        console.log('Video stream failed:', error)
+      }
+
+      try {
+        // Get audio stream
+        audioStream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: true
+        })
+      } catch (error) {
+        console.log('Audio stream failed:', error)
+      }
+
+      // If we couldn't get separate streams, try combined stream
+      if (!videoStream && !audioStream) {
+        const combinedStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        })
+        videoStream = combinedStream
+        audioStream = combinedStream
+      }
     }
   } catch (error) {
     console.log('Modern API failed, trying legacy...', error)
   }
 
-  // Try legacy APIs
-  try {
-    const nav = navigator as Navigator & {
-      getUserMedia?: (
-        constraints: MediaStreamConstraints,
-        success: (stream: MediaStream) => void,
-        error: (error: Error) => void,
-      ) => void
-      webkitGetUserMedia?: (
-        constraints: MediaStreamConstraints,
-        success: (stream: MediaStream) => void,
-        error: (error: Error) => void,
-      ) => void
-      mozGetUserMedia?: (
-        constraints: MediaStreamConstraints,
-        success: (stream: MediaStream) => void,
-        error: (error: Error) => void,
-      ) => void
-      msGetUserMedia?: (
-        constraints: MediaStreamConstraints,
-        success: (stream: MediaStream) => void,
-        error: (error: Error) => void,
-      ) => void
-    }
-    const getUserMedia =
-      nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia || nav.msGetUserMedia
+  // Try legacy APIs if modern API failed
+  if (!videoStream && !audioStream) {
+    try {
+      const nav = navigator as Navigator & {
+        getUserMedia?: (
+          constraints: MediaStreamConstraints,
+          success: (stream: MediaStream) => void,
+          error: (error: Error) => void,
+        ) => void
+        webkitGetUserMedia?: (
+          constraints: MediaStreamConstraints,
+          success: (stream: MediaStream) => void,
+          error: (error: Error) => void,
+        ) => void
+        mozGetUserMedia?: (
+          constraints: MediaStreamConstraints,
+          success: (stream: MediaStream) => void,
+          error: (error: Error) => void,
+        ) => void
+        msGetUserMedia?: (
+          constraints: MediaStreamConstraints,
+          success: (stream: MediaStream) => void,
+          error: (error: Error) => void,
+        ) => void
+      }
+      const getUserMedia =
+        nav.getUserMedia || nav.webkitGetUserMedia || nav.mozGetUserMedia || nav.msGetUserMedia
 
-    if (getUserMedia) {
-      return new Promise<MediaStream>((resolve, reject) => {
-        getUserMedia.call(navigator, { video: true, audio: true }, resolve, reject)
-      })
+      if (getUserMedia) {
+        const combinedStream = await new Promise<MediaStream>((resolve, reject) => {
+          getUserMedia.call(navigator, { video: true, audio: true }, resolve, reject)
+        })
+        videoStream = combinedStream
+        audioStream = combinedStream
+      }
+    } catch (error) {
+      console.log('Legacy API also failed', error)
     }
-  } catch (error) {
-    console.log('Legacy API also failed', error)
   }
 
-  return null
+  return { videoStream, audioStream }
 }
 
 // Video Management
@@ -454,6 +513,7 @@ const startRecording = async () => {
   try {
     state.value.isProcessing = true
     state.value.recordingChunks = []
+    state.value.audioChunks = []
 
     // Setup video preview - ensure it's working
     const videoSetupSuccess = await setupVideoPreview(state.value.mediaStream)
@@ -461,14 +521,14 @@ const startRecording = async () => {
       console.warn('Video preview setup failed, but continuing with recording')
     }
 
-    // Create MediaRecorder
-    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+    // Create MediaRecorder for video
+    const videoMimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
       ? 'video/webm;codecs=vp9,opus'
       : MediaRecorder.isTypeSupported('video/webm')
         ? 'video/webm'
         : 'video/mp4'
 
-    state.value.mediaRecorder = new MediaRecorder(state.value.mediaStream, { mimeType })
+    state.value.mediaRecorder = new MediaRecorder(state.value.mediaStream, { mimeType: videoMimeType })
 
     state.value.mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
@@ -477,17 +537,47 @@ const startRecording = async () => {
     }
 
     state.value.mediaRecorder.onstop = () => {
-      const videoBlob = new Blob(state.value.recordingChunks, { type: mimeType })
-      saveQuestionResponse(videoBlob)
+      const videoBlob = new Blob(state.value.recordingChunks, { type: videoMimeType })
+      const audioBlob = state.value.audioChunks.length > 0
+        ? new Blob(state.value.audioChunks, { type: 'audio/webm' })
+        : null
+      saveQuestionResponse(videoBlob, audioBlob)
     }
 
+    // Create MediaRecorder for audio if we have separate audio stream
+    if (state.value.audioStream && state.value.audioStream !== state.value.mediaStream) {
+      const audioMimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
+          : 'audio/mp4'
+
+      state.value.audioRecorder = new MediaRecorder(state.value.audioStream, { mimeType: audioMimeType })
+
+      state.value.audioRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          state.value.audioChunks.push(event.data)
+        }
+      }
+
+      state.value.audioRecorder.onstop = () => {
+        // Audio recording stopped
+        console.log('Audio recording stopped')
+      }
+    }
+
+    // Start both recorders
     state.value.mediaRecorder.start(1000)
+    if (state.value.audioRecorder) {
+      state.value.audioRecorder.start(1000)
+    }
+
     state.value.isRecording = true
     startTimer()
 
     toast.success({
       title: 'ضبط شروع شد',
-      description: 'پاسخ خود را ارائه دهید',
+      description: 'پاسخ خود را ارائه دهید (ویدیو و صدا)',
     })
   } catch (error) {
     console.error('Recording error:', error)
@@ -510,6 +600,10 @@ const stopRecording = async () => {
       state.value.mediaRecorder.stop()
     }
 
+    if (state.value.audioRecorder?.state === 'recording') {
+      state.value.audioRecorder.stop()
+    }
+
     state.value.isRecording = false
     stopTimer()
 
@@ -517,7 +611,7 @@ const stopRecording = async () => {
 
     toast.success({
       title: 'ضبط متوقف شد',
-      description: 'پاسخ شما ذخیره شد',
+      description: 'پاسخ شما ذخیره شد (ویدیو و صدا)',
     })
 
     if (state.value.currentQuestionIndex >= props.questions.length - 1) {
@@ -538,7 +632,7 @@ const stopRecording = async () => {
 }
 
 // Data Management
-const saveQuestionResponse = (videoBlob: Blob) => {
+const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) => {
   if (!currentQuestion.value) return
 
   const response: QuestionResponse = {
@@ -546,7 +640,7 @@ const saveQuestionResponse = (videoBlob: Blob) => {
     questionTitle: currentQuestion.value.title,
     questionNumber: state.value.currentQuestionIndex + 1,
     videoBlob: videoBlob,
-    audioBlob: null,
+    audioBlob: audioBlob,
     transcript: '',
     duration: state.value.recordingTime,
     timestamp: new Date(),
@@ -576,12 +670,13 @@ const saveNote = () => {
 }
 
 // Interview Flow
-const startInterview = async (stream: MediaStream) => {
-  state.value.mediaStream = stream
+const startInterview = async (videoStream: MediaStream, audioStream: MediaStream | null = null) => {
+  state.value.mediaStream = videoStream
+  state.value.audioStream = audioStream
   state.value.currentQuestionIndex = 0
 
   // Setup video preview first
-  await setupVideoPreview(stream)
+  await setupVideoPreview(videoStream)
 
   await startRecording()
 }
@@ -611,6 +706,9 @@ const finishInterview = async () => {
     state.value.mediaStream.getTracks().forEach((track) => track.stop())
     state.value.mediaStream = null
   }
+  if (state.value.audioStream && state.value.audioStream !== state.value.mediaStream) {
+    state.value.audioStream.getTracks().forEach((track) => track.stop())
+  }
 
   emit('interview-completed', state.value.responses)
 }
@@ -634,16 +732,16 @@ const handleMainButton = async () => {
 
 // Permission Handling
 const handlePermissionConfirm = async () => {
-  const stream = await getMediaStream()
+  const { videoStream, audioStream } = await getMediaStream()
 
-  if (stream) {
+  if (videoStream) {
     toast.success({
       title: 'دسترسی با موفقیت دریافت شد! 🎉',
       description: 'آماده‌سازی برای شروع مصاحبه...',
     })
     modals.value.showPermissionModal = false
     modals.value.showCountdownModal = true
-    startCountdown(stream)
+    startCountdown(videoStream, audioStream)
   } else {
     toast.error({
       title: 'خطا در دریافت دسترسی',
@@ -661,7 +759,7 @@ const handlePermissionCancel = () => {
 }
 
 // Countdown Functions
-const startCountdown = (stream: MediaStream) => {
+const startCountdown = (videoStream: MediaStream, audioStream: MediaStream | null = null) => {
   modals.value.countdownTime = 5
 
   const countdownInterval = setInterval(() => {
@@ -670,7 +768,7 @@ const startCountdown = (stream: MediaStream) => {
     if (modals.value.countdownTime <= 0) {
       clearInterval(countdownInterval)
       modals.value.showCountdownModal = false
-      startInterview(stream)
+      startInterview(videoStream, audioStream)
     }
   }, 1000)
 }
@@ -700,6 +798,9 @@ onUnmounted(() => {
   }
   if (state.value.mediaStream) {
     state.value.mediaStream.getTracks().forEach((track) => track.stop())
+  }
+  if (state.value.audioStream && state.value.audioStream !== state.value.mediaStream) {
+    state.value.audioStream.getTracks().forEach((track) => track.stop())
   }
 })
 
