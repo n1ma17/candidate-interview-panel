@@ -222,7 +222,7 @@ import { useI18n } from 'vue-i18n';
 
 import {
   ChevronDownIcon,
-  HorizontalDots,
+  DashboardIcon,
 } from "../../icons";
 import { useSidebar } from "@/composables/useSidebar";
 
@@ -251,7 +251,7 @@ const menuGroups: { title: string; items: MenuItem[] }[] = [
     title: "منو اصلی",
     items: [
       {
-        icon: HorizontalDots,
+        icon: DashboardIcon,
         name: t('navigation.dashboard'),
         path: "/",
       },

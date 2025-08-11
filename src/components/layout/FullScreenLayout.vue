@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen xl:flex">
-  <FullScreenHeader />
-  <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-    <slot></slot>
-  </div>
+  <div>
+    <FullScreenHeader />
+    <div class="w-full p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+      <slot></slot>
+    </div>
 
     <!-- Toast Container -->
     <ToastComponent />

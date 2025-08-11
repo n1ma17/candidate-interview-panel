@@ -4,6 +4,8 @@ import ChevronDownIcon from "./ChevronDownIcon.vue";
 import LogoutIcon from "./LogoutIcon.vue";
 import InfoCircleIcon from "./InfoCircleIcon.vue";
 import SettingsIcon from "./SettingsIcon.vue";
+import FolderIcon from "./FolderIcon.vue";
+import DashboardIcon from "./DashboardIcon.vue";
 
 export {
   HorizontalDots,
@@ -12,4 +14,6 @@ export {
   LogoutIcon,
   InfoCircleIcon,
   SettingsIcon,
+  FolderIcon,
+  DashboardIcon
 };
