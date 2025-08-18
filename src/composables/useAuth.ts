@@ -14,7 +14,7 @@ const isLoading = ref(false)
 const error = ref<string | null>(null)
 
 // Demo users for testing (in real app, this would come from API)
-const DEMO_USERS = [
+const DEMO_USERS: Array<{ id: string; email: string; password: string; name: string }> = [
   { id: '1', email: 'admin@example.com', password: 'admin123', name: 'Admin User' },
   { id: '2', email: 'user@example.com', password: 'user123', name: 'Regular User' },
 ]
@@ -43,6 +43,63 @@ export const useAuth = () => {
         localStorage.removeItem('auth_user')
         sessionStorage.removeItem('auth_user')
       }
+    }
+  }
+
+  // Register function
+  const register = async (email: string, password: string, name: string) => {
+    isLoading.value = true
+    error.value = null
+
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Check if user already exists
+      const existingUser = DEMO_USERS.find(u => u.email === email)
+      if (existingUser) {
+        throw new Error('کاربری با این ایمیل قبلاً ثبت شده است')
+      }
+
+      // Validate input
+      if (!email || !password || !name) {
+        throw new Error('لطفاً تمام فیلدها را پر کنید')
+      }
+
+      if (password.length < 6) {
+        throw new Error('رمز عبور باید حداقل ۶ کاراکتر باشد')
+      }
+
+      // Create new user
+      const newUser = {
+        id: (DEMO_USERS.length + 1).toString(),
+        email,
+        password,
+        name
+      }
+
+      // Add to demo users (in real app, this would be API call)
+      DEMO_USERS.push(newUser)
+
+      // Auto-login after successful registration
+      const userData: User = {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name
+      }
+
+      user.value = userData
+      localStorage.setItem('auth_user', JSON.stringify(userData))
+
+      // Redirect to home page
+      router.push('/')
+
+      return { success: true }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'خطا در ثبت نام'
+      return { success: false, error: error.value }
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -114,6 +171,7 @@ export const useAuth = () => {
 
     // Methods
     initAuth,
+    register,
     login,
     logout,
     clearError
