@@ -7,6 +7,9 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
   },
   withCredentials: true, // Enable cookies
 })
@@ -21,6 +24,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `JWT ${token}`
     }
 
+    // Add CORS headers
+    config.headers['Origin'] = window.location.origin
+    config.headers['Access-Control-Allow-Origin'] = '*'
+
     return config
   },
   (error) => {
@@ -34,6 +41,12 @@ api.interceptors.response.use(
     return response
   },
   async (error) => {
+    // Handle CORS errors
+    if (error.code === 'ERR_NETWORK' || error.message.includes('CORS')) {
+      console.error('CORS Error:', error.message)
+      return Promise.reject(new Error('خطا در ارتباط با سرور. لطفاً مطمئن شوید که سرور در دسترس است.'))
+    }
+
     const originalRequest = error.config
 
     // Handle 401 errors and try to refresh token
