@@ -398,11 +398,6 @@
           </div>
         </div>
 
-        <!-- CORS Test Component (Temporary for debugging) -->
-        <div class="lg:hidden p-4">
-          <CorsTest />
-        </div>
-
         <div
           class="relative p-6 items-center hidden w-full h-full lg:w-1/2  lg:grid"
         >
@@ -422,7 +417,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
 import { useAuthQuery } from '@/composables/useAuthQuery'
-import CorsTest from '@/components/CorsTest.vue'
 
 const { login, register, isLoading, error, clearError } = useAuthQuery()
 

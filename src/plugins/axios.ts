@@ -12,7 +12,6 @@ const api = axios.create({
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
     'Access-Control-Allow-Credentials': 'true',
-    'Cache-Control': 'no-cache',
     Pragma: 'no-cache',
   },
   withCredentials: true, // Enable cookies
