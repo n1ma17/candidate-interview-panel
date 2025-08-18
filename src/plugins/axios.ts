@@ -7,11 +7,13 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    accept: 'application/json, text/plain, */*',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
     'Access-Control-Allow-Credentials': 'true',
-
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
   },
   withCredentials: true, // Enable cookies
 
@@ -31,6 +33,14 @@ api.interceptors.request.use(
     config.headers['Origin'] = window.location.origin
     config.headers['Access-Control-Allow-Origin'] = '*'
 
+    // Debug CORS request
+    console.log('🚀 Request Config:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      baseURL: config.baseURL
+    })
+
     return config
   },
   (error) => {
@@ -46,7 +56,13 @@ api.interceptors.response.use(
   async (error) => {
     // Handle CORS errors
     if (error.code === 'ERR_NETWORK' || error.message.includes('CORS')) {
-      console.error('CORS Error:', error.message)
+      console.error('🚨 CORS Error Details:', {
+        code: error.code,
+        message: error.message,
+        response: error.response,
+        request: error.request,
+        config: error.config
+      })
       return Promise.reject(new Error('خطا در ارتباط با سرور. لطفاً مطمئن شوید که سرور در دسترس است.'))
     }
 
@@ -93,5 +109,25 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// Test function to debug CORS
+export const testCorsConnection = async () => {
+  try {
+    console.log('🧪 Testing CORS connection...')
+    const response = await api.get('/')
+    console.log('✅ CORS test successful:', response.data)
+    return true
+  } catch (error: unknown) {
+    const errorData = error as { code?: string; message?: string; response?: { status?: number; statusText?: string; headers?: Record<string, string> } }
+    console.error('❌ CORS test failed:', {
+      code: errorData.code,
+      message: errorData.message,
+      status: errorData.response?.status,
+      statusText: errorData.response?.statusText,
+      headers: errorData.response?.headers
+    })
+    return false
+  }
+}
 
 export default api
