@@ -142,7 +142,7 @@ export const useAuth = () => {
 
       return { success: true }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'خطا در ورود به سیستم'
+      error.value = err instanceof Error ? err.message : 'خطا در ورود به سیستم1'
       return { success: false, error: error.value }
     } finally {
       isLoading.value = false

@@ -14,7 +14,7 @@ class CookieManager {
     const expiresAt = Date.now() + (expiresInMinutes * 60 * 1000)
     const expiresDate = new Date(expiresAt)
 
-    document.cookie = `access_token=${token}; expires=${expiresDate.toUTCString()}; path=/; secure; samesite=strict`
+    document.cookie = `access_token=${token}; expires=${expiresDate.toUTCString()}; path=/; samesite=lax`
 
     // Also store expiration time for client-side checks
     localStorage.setItem('access_token_expires', expiresAt.toString())
@@ -25,7 +25,7 @@ class CookieManager {
     const expiresAt = Date.now() + (expiresInDays * 24 * 60 * 60 * 1000)
     const expiresDate = new Date(expiresAt)
 
-    document.cookie = `refresh_token=${token}; expires=${expiresDate.toUTCString()}; path=/; secure; samesite=strict`
+    document.cookie = `refresh_token=${token}; expires=${expiresDate.toUTCString()}; path=/; samesite=lax`
 
     // Also store expiration time for client-side checks
     localStorage.setItem('refresh_token_expires', expiresAt.toString())
@@ -126,6 +126,17 @@ class CookieManager {
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return !this.isAccessTokenExpired() && !!this.getAccessToken()
+  }
+
+  // Debug function to check cookies
+  debugCookies(): void {
+    console.log('🍪 Cookie Debug Info:')
+    console.log('All cookies:', document.cookie)
+    console.log('Access token:', this.getAccessToken())
+    console.log('Refresh token:', this.getRefreshToken())
+    console.log('Access expires:', this.getAccessTokenExpiration())
+    console.log('Refresh expires:', this.getRefreshTokenExpiration())
+    console.log('Is authenticated:', this.isAuthenticated())
   }
 }
 

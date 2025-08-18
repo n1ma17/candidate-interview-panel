@@ -8,10 +8,6 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     accept: 'application/json, text/plain, */*',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-    'Access-Control-Allow-Credentials': 'true',
     Pragma: 'no-cache',
   },
   withCredentials: true, // Enable cookies
@@ -28,9 +24,8 @@ api.interceptors.request.use(
       config.headers.Authorization = `JWT ${token}`
     }
 
-    // Add CORS headers
+    // Add Origin header only
     config.headers['Origin'] = window.location.origin
-    config.headers['Access-Control-Allow-Origin'] = '*'
 
     // Debug CORS request
     console.log('🚀 Request Config:', {

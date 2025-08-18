@@ -34,17 +34,24 @@ export const useAuthQuery = () => {
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginRequest) => authService.login(credentials),
     onSuccess: (response) => {
-      if (response.success && response.data) {
-        user.value = response.data.user
-        localStorage.setItem('auth_user', JSON.stringify(response.data.user))
+      console.log('🎯 Login response structure:', response)
+              const responseData = response as unknown as { user?: unknown; access?: unknown; refresh_token?: unknown; data?: { user?: unknown; access?: unknown; refresh_token?: unknown } }
+        const userData = responseData.user || responseData.data?.user || responseData
+        const accessToken = responseData.access || responseData.data?.access
+        const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
+      if (userData && accessToken && typeof accessToken === 'string') {
+        user.value = userData as AuthResponse['user']
+        localStorage.setItem('auth_user', JSON.stringify(userData))
+        // Set tokens in cookies
+        cookieManager.setAccessToken(accessToken, 15)
+        if (refreshToken && typeof refreshToken === 'string') cookieManager.setRefreshToken(refreshToken, 7)
+
         error.value = null
         router.push('/')
-      } else {
-        error.value = response.error || 'خطا در ورود به سیستم'
       }
     },
     onError: (err: Error) => {
-      error.value = err.message || 'خطا در ورود به سیستم'
+      error.value = err.message || 'خطا در ورود به سیستم3'
     }
   })
 
@@ -52,11 +59,27 @@ export const useAuthQuery = () => {
   const registerMutation = useMutation({
     mutationFn: (userData: RegisterRequest) => authService.register(userData),
     onSuccess: (response) => {
-      if (response.success && response.data) {
-        user.value = response.data.user
-        localStorage.setItem('auth_user', JSON.stringify(response.data.user))
-        error.value = null
-        router.push('/')
+      console.log('🎯 Register response structure:', response)
+      if (response.success) {
+        // Check if user data is directly in response or in nested structure
+        const responseData = response as unknown as { user?: unknown; access?: unknown; refresh_token?: unknown; data?: { user?: unknown; access?: unknown; refresh_token?: unknown } }
+        const userData = responseData.user || responseData.data?.user || responseData
+        const accessToken = responseData.access || responseData.data?.access
+        const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
+
+        if (userData && accessToken && typeof accessToken === 'string') {
+          user.value = userData as AuthResponse['user']
+          localStorage.setItem('auth_user', JSON.stringify(userData))
+
+          // Set tokens in cookies
+          cookieManager.setAccessToken(accessToken, 15)
+          if (refreshToken && typeof refreshToken === 'string') cookieManager.setRefreshToken(refreshToken, 7)
+
+          error.value = null
+          router.push('/')
+        } else {
+          error.value = 'اطلاعات کاربر یا توکن در دسترس نیست'
+        }
       } else {
         error.value = response.error || 'خطا در ثبت نام'
       }

@@ -429,8 +429,8 @@ const showConfirmPassword = ref(false)
 
 // Login form
 const loginForm = ref({
-  username: 'admin',
-  password: 'admin123'
+  username: 'farzad_d',
+  password: 'Ferry12345678'
 })
 
 // Register form
