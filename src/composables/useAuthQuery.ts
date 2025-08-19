@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import authService, { type LoginRequest, type RegisterRequest, type AuthResponse } from '@/services/authService'
+import authService, {
+  type LoginRequest,
+  type RegisterRequest,
+  type AuthResponse,
+} from '@/services/authService'
 import cookieManager from '@/utils/cookies'
 
 export const useAuthQuery = () => {
@@ -35,16 +39,22 @@ export const useAuthQuery = () => {
     mutationFn: (credentials: LoginRequest) => authService.login(credentials),
     onSuccess: (response) => {
       console.log('🎯 Login response structure:', response)
-              const responseData = response as unknown as { user?: unknown; access?: unknown; refresh_token?: unknown; data?: { user?: unknown; access?: unknown; refresh_token?: unknown } }
-        const userData = responseData.user || responseData.data?.user || responseData
-        const accessToken = responseData.access || responseData.data?.access
-        const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
+      const responseData = response as unknown as {
+        user?: unknown
+        access?: unknown
+        refresh_token?: unknown
+        data?: { user?: unknown; access?: unknown; refresh_token?: unknown }
+      }
+      const userData = responseData.user || responseData.data?.user || responseData
+      const accessToken = responseData.access || responseData.data?.access
+      const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
       if (userData && accessToken && typeof accessToken === 'string') {
         user.value = userData as AuthResponse['user']
         localStorage.setItem('auth_user', JSON.stringify(userData))
         // Set tokens in cookies
         cookieManager.setAccessToken(accessToken, 15)
-        if (refreshToken && typeof refreshToken === 'string') cookieManager.setRefreshToken(refreshToken, 7)
+        if (refreshToken && typeof refreshToken === 'string')
+          cookieManager.setRefreshToken(refreshToken, 7)
 
         error.value = null
         router.push('/')
@@ -52,7 +62,7 @@ export const useAuthQuery = () => {
     },
     onError: (err: Error) => {
       error.value = err.message || 'خطا در ورود به سیستم3'
-    }
+    },
   })
 
   // Register mutation
@@ -60,33 +70,38 @@ export const useAuthQuery = () => {
     mutationFn: (userData: RegisterRequest) => authService.register(userData),
     onSuccess: (response) => {
       console.log('🎯 Register response structure:', response)
-      if (response.success) {
-        // Check if user data is directly in response or in nested structure
-        const responseData = response as unknown as { user?: unknown; access?: unknown; refresh_token?: unknown; data?: { user?: unknown; access?: unknown; refresh_token?: unknown } }
-        const userData = responseData.user || responseData.data?.user || responseData
-        const accessToken = responseData.access || responseData.data?.access
-        const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
 
-        if (userData && accessToken && typeof accessToken === 'string') {
-          user.value = userData as AuthResponse['user']
-          localStorage.setItem('auth_user', JSON.stringify(userData))
 
-          // Set tokens in cookies
-          cookieManager.setAccessToken(accessToken, 15)
-          if (refreshToken && typeof refreshToken === 'string') cookieManager.setRefreshToken(refreshToken, 7)
 
-          error.value = null
-          router.push('/')
-        } else {
-          error.value = 'اطلاعات کاربر یا توکن در دسترس نیست'
-        }
+      // Check if user data is directly in response or in nested structure
+      const responseData = response as unknown as {
+        user?: unknown
+        access?: unknown
+        refresh_token?: unknown
+        data?: { user?: unknown; access?: unknown; refresh_token?: unknown }
+      }
+      const userData = responseData.user || responseData.data?.user || responseData
+      const accessToken = responseData.access || responseData.data?.access
+      const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
+
+      if (userData && accessToken && typeof accessToken === 'string') {
+        user.value = userData as AuthResponse['user']
+        localStorage.setItem('auth_user', JSON.stringify(userData))
+
+        // Set tokens in cookies
+        cookieManager.setAccessToken(accessToken, 15)
+        if (refreshToken && typeof refreshToken === 'string')
+          cookieManager.setRefreshToken(refreshToken, 7)
+
+        error.value = null
+        router.push('/')
       } else {
-        error.value = response.error || 'خطا در ثبت نام'
+        error.value = 'اطلاعات کاربر یا توکن در دسترس نیست'
       }
     },
     onError: (err: Error) => {
       error.value = err.message || 'خطا در ثبت نام'
-    }
+    },
   })
 
   // Logout mutation
@@ -106,7 +121,7 @@ export const useAuthQuery = () => {
       cookieManager.removeAllTokens()
       queryClient.clear()
       router.push('/signin')
-    }
+    },
   })
 
   // Get current user query
@@ -125,14 +140,17 @@ export const useAuthQuery = () => {
   })
 
   // Watch for query errors
-  watch(() => currentUser.value, (response) => {
-    if (response && !response.success) {
-      // If getting user fails, clear auth state
-      user.value = null
-      localStorage.removeItem('auth_user')
-      cookieManager.removeAllTokens()
-    }
-  })
+  watch(
+    () => currentUser.value,
+    (response) => {
+      if (response && !response.success) {
+        // If getting user fails, clear auth state
+        user.value = null
+        localStorage.removeItem('auth_user')
+        cookieManager.removeAllTokens()
+      }
+    },
+  )
 
   // Login function
   const login = async (username: string, password: string) => {
@@ -141,9 +159,24 @@ export const useAuthQuery = () => {
   }
 
   // Register function
-  const register = async (name: string, email: string, password: string, confirmPassword: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    position?: number,
+    resume?: File,
+  ) => {
     error.value = null
-    return registerMutation.mutate({ username: name, email, password1: password, password2: confirmPassword })
+
+    return registerMutation.mutate({
+      username: name,
+      email,
+      password1: password,
+      password2: confirmPassword,
+      position,
+      resume,
+    })
   }
 
   // Logout function
@@ -163,7 +196,12 @@ export const useAuthQuery = () => {
   return {
     // State
     user: computed(() => user.value),
-    isLoading: computed(() => loginMutation.isPending.value || registerMutation.isPending.value || logoutMutation.isPending.value),
+    isLoading: computed(
+      () =>
+        loginMutation.isPending.value ||
+        registerMutation.isPending.value ||
+        logoutMutation.isPending.value,
+    ),
     isLoadingUser: computed(() => isLoadingUser.value),
     error: computed(() => error.value),
     isAuthenticated,
@@ -175,6 +213,6 @@ export const useAuthQuery = () => {
     logout,
     clearError,
     getAccessTokenExpiration,
-    getRefreshTokenExpiration
+    getRefreshTokenExpiration,
   }
 }

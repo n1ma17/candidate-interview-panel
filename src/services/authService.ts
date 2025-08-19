@@ -11,6 +11,8 @@ export interface RegisterRequest {
   email: string
   password1: string
   password2: string
+  position?: number
+  resume?: File
 }
 
 export interface AuthResponse {

@@ -1,37 +1,40 @@
 <template>
   <AuthLayout>
-    <div class="relative  bg-white z-1 dark:bg-gray-900 ">
+    <div class="relative bg-white z-1 dark:bg-gray-900">
       <div
         class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900"
       >
-        <div class="flex p-6 flex-col flex-1 w-full lg:w-1/2 bg-brand-950  dark:bg-white/5">
+        <div class="flex p-6 flex-col flex-1 w-full lg:w-1/2 bg-brand-950 dark:bg-white/5">
+          <!-- Error message -->
+          <div
+            v-if="error"
+            class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
+          >
+            {{ error }}
+          </div>
+          <!-- Toggle between Login and Register -->
+          <div class="flex mb-6 w-[60%] mx-auto rounded-lg p-1">
+            <button
+              @click="isLoginMode = true"
+              :class="
+                isLoginMode ? 'text-white border-b-2 border-white' : 'text-gray-300 hover:text-white'
+              "
+              class="flex-1 py-2 px-4  text-sm font-medium transition-colors"
+            >
+              ورود
+            </button>
+            <button
+              @click="isLoginMode = false"
+              :class="
+                !isLoginMode ? 'text-white border-b-2 border-white' : 'text-gray-300 hover:text-white'
+              "
+              class="flex-1 py-2 px-4  text-sm font-medium transition-colors"
+            >
+              ثبت نام
+            </button>
+          </div>
           <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
-              <!-- Toggle between Login and Register -->
-              <div class="flex mb-6 bg-gray-800 rounded-lg p-1">
-                <button
-                  @click="isLoginMode = true"
-                  :class="
-                    isLoginMode
-                      ? 'bg-brand-500 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  "
-                  class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-                >
-                  ورود
-                </button>
-                <button
-                  @click="isLoginMode = false"
-                  :class="
-                    !isLoginMode
-                      ? 'bg-brand-500 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  "
-                  class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-                >
-                  ثبت نام
-                </button>
-              </div>
 
               <div class="mb-5 sm:mb-8">
                 <h1
@@ -40,19 +43,15 @@
                   {{ isLoginMode ? 'ورود به سیستم' : 'ثبت نام در سیستم' }}
                 </h1>
                 <p class="text-sm text-gray-400 dark:text-gray-400">
-                  {{ isLoginMode ? 'ایمیل و رمز عبور خود را وارد کنید!' : 'اطلاعات خود را برای ثبت نام وارد کنید!' }}
+                  {{
+                    isLoginMode
+                      ? 'ایمیل و رمز عبور خود را وارد کنید!'
+                      : 'اطلاعات خود را برای ثبت نام وارد کنید!'
+                  }}
                 </p>
               </div>
 
               <div>
-                <!-- Error message -->
-                <div
-                  v-if="error"
-                  class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
-                >
-                  {{ error }}
-                </div>
-
                 <!-- Login Form -->
                 <form v-if="isLoginMode" @submit.prevent="handleLogin">
                   <div class="space-y-5">
@@ -361,6 +360,54 @@
                         </span>
                       </div>
                     </div>
+
+                    <!-- Position Selection -->
+                    <div>
+                      <label
+                        for="register-position"
+                        class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+                      >
+                        موقعیت شغلی<span class="text-error-500">*</span>
+                      </label>
+                      <SelectComponent
+                        v-model="registerForm.position"
+                        :options="jobPositions"
+                        placeholder="موقعیت شغلی خود را انتخاب کنید"
+                        id="register-position"
+                      />
+                    </div>
+
+                    <!-- PDF Upload -->
+                    <div>
+                      <label
+                        for="register-resume"
+                        class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+                      >
+                        رزومه (PDF)<span class="text-error-500">*</span>
+                      </label>
+                      <div class="relative">
+                        <input
+                          @change="handleFileUpload"
+                          type="file"
+                          id="register-resume"
+                          name="resume"
+                          accept=".pdf"
+                          class="hidden"
+                        />
+                        <label
+                          for="register-resume"
+                          class="flex items-center justify-center w-full h-11 px-4 py-2.5 text-sm text-gray-100 border border-gray-100 rounded-lg cursor-pointer hover:border-brand-300 transition-colors dark:border-gray-700 dark:hover:border-brand-800"
+                        >
+                          <FileUpload class="ml-4" />
+                          <span v-if="!registerForm.resume">انتخاب فایل PDF</span>
+                          <span v-else class="text-brand-300">{{ registerForm.resume.name }}</span>
+                        </label>
+                      </div>
+                      <div class="mt-2 text-xs text-gray-400">
+                        <p>فقط فایل‌های PDF قابل قبول هستند (حداکثر 5MB)</p>
+                      </div>
+                    </div>
+
                     <!-- Button -->
                     <div>
                       <button
@@ -398,13 +445,17 @@
           </div>
         </div>
 
-        <div
-          class="relative p-6 items-center hidden w-full h-full lg:w-1/2  lg:grid"
-        >
+        <div class="relative p-6 items-center hidden w-full h-full lg:w-1/2 lg:grid">
           <div class="flex items-center justify-center z-1">
             <common-grid-shape />
             <div class="flex flex-col items-center max-w-xs">
-              <img width="{231}" height="{48}" src="/images/logo/logo-en.jpg" alt="Logo" class="mb-4" />
+              <img
+                width="{231}"
+                height="{48}"
+                src="/images/logo/logo-en.jpg"
+                alt="Logo"
+                class="mb-4"
+              />
             </div>
           </div>
         </div>
@@ -417,6 +468,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
 import { useAuthQuery } from '@/composables/useAuthQuery'
+import SelectComponent from '@/components/common/SelectComponent.vue'
+import FileUpload from '@/icons/FileUpload.vue'
+import { toast } from '@/composables/useToast'
 
 const { login, register, isLoading, error, clearError } = useAuthQuery()
 
@@ -430,7 +484,7 @@ const showConfirmPassword = ref(false)
 // Login form
 const loginForm = ref({
   username: 'farzad_d',
-  password: 'Ferry12345678'
+  password: 'Ferry12345678',
 })
 
 // Register form
@@ -438,8 +492,29 @@ const registerForm = ref({
   name: '',
   email: '',
   password: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  position: 0,
+  resume: null as File | null,
 })
+
+// Job positions array
+const jobPositions = ref([
+  { id: 1, title: 'توسعه‌دهنده Frontend' },
+  { id: 2, title: 'توسعه‌دهنده Backend' },
+  { id: 3, title: 'توسعه‌دهنده Full Stack' },
+  { id: 4, title: 'طراح UI/UX' },
+  { id: 5, title: 'مدیر پروژه' },
+  { id: 6, title: 'تست کننده نرم‌افزار' },
+  { id: 7, title: 'مدیر سیستم' },
+  { id: 8, title: 'تحلیلگر داده' },
+  { id: 9, title: 'متخصص DevOps' },
+  { id: 10, title: 'مدیر محصول' },
+])
+
+// File upload state
+const selectedFile = ref<File | null>(null)
+
+
 
 // Computed properties
 const isRegisterFormValid = computed(() => {
@@ -448,6 +523,8 @@ const isRegisterFormValid = computed(() => {
     registerForm.value.email.trim() &&
     registerForm.value.password &&
     registerForm.value.confirmPassword &&
+    registerForm.value.position > 0 &&
+    registerForm.value.resume &&
     registerForm.value.password === registerForm.value.confirmPassword &&
     registerForm.value.password.length >= 8 &&
     /[A-Z]/.test(registerForm.value.password)
@@ -492,9 +569,44 @@ const handleRegister = async () => {
     registerForm.value.name,
     registerForm.value.email,
     registerForm.value.password,
-    registerForm.value.confirmPassword
+    registerForm.value.confirmPassword,
+    registerForm.value.position,
+    registerForm.value.resume || undefined
   )
 }
+
+// File upload handler
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      toast.error({
+        title: 'خطا در نوع فایل',
+        description: 'فقط فایل‌های PDF قابل قبول هستند'
+      })
+      target.value = ''
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error({
+        title: 'خطا در حجم فایل',
+        description: 'حجم فایل نباید بیشتر از 5MB باشد'
+      })
+      target.value = ''
+      return
+    }
+
+    selectedFile.value = file
+    registerForm.value.resume = file
+  }
+}
+
+
 
 // Clear error when component mounts or mode changes
 onMounted(() => {
