@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/signin',
       name: 'Signin',
-      component: () => import('../views/Auth/SigninPage.vue'),
+      component: () => import('../views/Auth/AuthPages.vue'),
       meta: {
         title: 'Signin',
         guest: true,
