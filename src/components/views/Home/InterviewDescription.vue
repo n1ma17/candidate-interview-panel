@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-fit bg-white rounded-[12px] border border-gray-100 dark:border-gray-700 shadow-sm p-6"
+    class="w-full h-fit bg-white dark:bg-gray-900 rounded-[12px] border border-gray-100 dark:border-gray-700 shadow-sm p-6"
   >
     <h3 class="mb-8 font-semibold text-primary text-center dark:text-white/90 sm:text-2xl flex items-center justify-center gap-2">
       <DocIcon />
@@ -17,7 +17,7 @@
       </li>
     </ul>
     <span
-      class="cursor-pointer mt-8 w-full flex items-center justify-end gap-2 text-xs font-semibold text-primary"
+      class="cursor-pointer mt-8 w-full flex items-center justify-end gap-2 text-xs font-semibold dark:text-white text-primary"
     >
       مشاهده قوانین
       <ChevronLeftIcon />
