@@ -6,17 +6,17 @@ const { login, isLoading, clearError } = useAuthQuery()
 const showLoginPassword = ref(false)
 const keepLoggedIn = ref(false)
 const loginForm = ref({
-  username: 'farzad_d',
-  password: 'Ferry12345678',
+  email: 'farzaddarvish@yahoo.com',
+  password: 'Ferry1234',
 })
 const handleLogin = async () => {
   clearError()
 
-  if (!loginForm.value.username || !loginForm.value.password) {
+  if (!loginForm.value.email || !loginForm.value.password) {
     return
   }
 
-  await login(loginForm.value.username, loginForm.value.password)
+  await login(loginForm.value.email, loginForm.value.password)
 }
 </script>
 
@@ -26,25 +26,25 @@ const handleLogin = async () => {
       <!-- Username -->
       <div>
         <label
-          for="login-username"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          for="login-email"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
-          نام کاربری<span class="text-error-500">*</span>
+          ایمیل<span class="text-error-500">*</span>
         </label>
         <input
-          v-model="loginForm.username"
-          type="text"
-          id="login-username"
-          name="username"
-          placeholder="نام کاربری خود را وارد کنید"
-          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          v-model="loginForm.email"
+          type="email"
+          id="login-email"
+          name="email"
+          placeholder="ایمیل خود را وارد کنید"
+          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
       <!-- Password -->
       <div>
         <label
           for="login-password"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           رمز عبور<span class="text-error-500">*</span>
         </label>
@@ -54,7 +54,7 @@ const handleLogin = async () => {
             :type="showLoginPassword ? 'text' : 'password'"
             id="login-password"
             placeholder="رمز عبور خود را وارد کنید"
-            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
           />
           <span
             @click="showLoginPassword = !showLoginPassword"
@@ -95,7 +95,7 @@ const handleLogin = async () => {
           </span>
         </div>
         <!-- Password requirements -->
-        <div class="mt-2 text-xs text-gray-400">
+        <div class="mt-2 text-xs text-gray-600">
           <p>رمز عبور باید حداقل ۸ کاراکتر و شامل یک حرف بزرگ باشد</p>
         </div>
       </div>
@@ -104,7 +104,7 @@ const handleLogin = async () => {
         <div>
           <label
             for="keepLoggedIn"
-            class="flex items-center text-sm font-normal text-gray-100 cursor-pointer select-none dark:text-gray-400"
+            class="flex items-center text-sm font-normal text-gray-900 cursor-pointer select-none dark:text-gray-100"
           >
             <div class="relative ml-3">
               <input v-model="keepLoggedIn" type="checkbox" id="keepLoggedIn" class="sr-only" />
@@ -143,7 +143,7 @@ const handleLogin = async () => {
       <div>
         <button
           type="submit"
-          :disabled="isLoading || !loginForm.username || !loginForm.password"
+          :disabled="isLoading || !loginForm.email || !loginForm.password"
           class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg v-if="isLoading" class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">

@@ -15,7 +15,6 @@ const selectedFile = ref<File | null>(null)
 const jobPositions = ref<Category[]>([])
 const isLoadingCategories = ref(false)
 const registerForm = ref({
-  name: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -24,7 +23,6 @@ const registerForm = ref({
 })
 const isRegisterFormValid = computed(() => {
   return (
-    registerForm.value.name.trim() &&
     registerForm.value.email.trim() &&
     registerForm.value.password &&
     registerForm.value.confirmPassword &&
@@ -119,7 +117,6 @@ const handleRegister = async () => {
       }
 
     await register(
-    registerForm.value.name,
     registerForm.value.email,
     registerForm.value.password,
     registerForm.value.confirmPassword,
@@ -132,28 +129,12 @@ const handleRegister = async () => {
 <template>
   <form @submit.prevent="handleRegister">
     <div class="space-y-5">
-      <!-- Username -->
-      <div>
-        <label
-          for="register-username"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
-        >
-          نام کاربری<span class="text-error-500">*</span>
-        </label>
-        <input
-          v-model="registerForm.name"
-          type="text"
-          id="register-username"
-          name="username"
-          placeholder="نام کاربری خود را وارد کنید"
-          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-        />
-      </div>
+
       <!-- Email -->
       <div>
         <label
           for="register-email"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           ایمیل<span class="text-error-500">*</span>
         </label>
@@ -163,14 +144,14 @@ const handleRegister = async () => {
           id="register-email"
           name="email"
           placeholder="info@gmail.com"
-          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
       <!-- Password -->
       <div>
         <label
           for="register-password"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           رمز عبور<span class="text-error-500">*</span>
         </label>
@@ -180,7 +161,7 @@ const handleRegister = async () => {
             :type="showRegisterPassword ? 'text' : 'password'"
             id="register-password"
             placeholder="رمز عبور خود را وارد کنید"
-            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
           />
           <span
             @click="showRegisterPassword = !showRegisterPassword"
@@ -221,7 +202,7 @@ const handleRegister = async () => {
           </span>
         </div>
         <!-- Password requirements -->
-        <div class="mt-2 text-xs text-gray-400">
+        <div class="mt-2 text-xs text-gray-600">
           <p>رمز عبور باید حداقل ۸ کاراکتر و شامل یک حرف بزرگ باشد</p>
         </div>
       </div>
@@ -229,7 +210,7 @@ const handleRegister = async () => {
       <div>
         <label
           for="register-confirm-password"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           تکرار رمز عبور<span class="text-error-500">*</span>
         </label>
@@ -239,7 +220,7 @@ const handleRegister = async () => {
             :type="showConfirmPassword ? 'text' : 'password'"
             id="register-confirm-password"
             placeholder="رمز عبور خود را تکرار کنید"
-            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-100 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
           />
           <span
             @click="showConfirmPassword = !showConfirmPassword"
@@ -285,7 +266,7 @@ const handleRegister = async () => {
       <div>
         <label
           for="register-position"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           موقعیت شغلی<span class="text-error-500">*</span>
         </label>
@@ -296,7 +277,7 @@ const handleRegister = async () => {
           id="register-position"
           :disabled="isLoadingCategories"
         />
-        <div v-if="isLoadingCategories" class="mt-2 text-xs text-gray-400">
+        <div v-if="isLoadingCategories" class="mt-2 text-xs text-gray-600">
           <p>در حال بارگذاری موقعیت‌های شغلی...</p>
         </div>
       </div>
@@ -305,7 +286,7 @@ const handleRegister = async () => {
       <div>
         <label
           for="register-resume"
-          class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400"
+          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           رزومه (PDF)<span class="text-error-500">*</span>
         </label>
@@ -327,7 +308,7 @@ const handleRegister = async () => {
             <span v-else class="text-brand-300">{{ registerForm.resume.name }}</span>
           </label>
         </div>
-        <div class="mt-2 text-xs text-gray-400">
+        <div class="mt-2 text-xs text-gray-600">
           <p>فقط فایل‌های PDF قابل قبول هستند (حداکثر 5MB)</p>
         </div>
       </div>

@@ -153,14 +153,13 @@ export const useAuthQuery = () => {
   )
 
   // Login function
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     error.value = null
-    return loginMutation.mutate({ username, password })
+    return loginMutation.mutate({ email, password })
   }
 
   // Register function
   const register = async (
-    name: string,
     email: string,
     password: string,
     confirmPassword: string,
@@ -170,7 +169,6 @@ export const useAuthQuery = () => {
     error.value = null
 
     return registerMutation.mutate({
-      username: name,
       email,
       password1: password,
       password2: confirmPassword,

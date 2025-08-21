@@ -12,7 +12,7 @@
       </div>
       <div class="w-full lg:w-[80%] xl:w-[60%] min-h-[500px] p-8 lg:shadow-xl rounded-2xl bg-[#ffffff]">
         <div class="w-full mb-4 flex justify-between items-center">
-          <span class="text-[48px] font-bold text-[#000]">
+          <span class="text-[32px] font-bold text-[#000]">
             {{ activeTab === 'login' ? 'ورود' : 'ثبت نام' }}
           </span>
           <img class="w-[160px] h-[68px]" src="/images/logo/logo-en.jpg" alt="Logo" />

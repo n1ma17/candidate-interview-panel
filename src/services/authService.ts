@@ -2,12 +2,11 @@ import api from '@/plugins/axios'
 import cookieManager from '@/utils/cookies'
 
 export interface LoginRequest {
-  username: string
+  email: string  // Keep as username for backend compatibility
   password: string
 }
 
 export interface RegisterRequest {
-  username: string
   email: string
   password1: string
   password2: string
@@ -107,7 +106,6 @@ class AuthService {
     try {
       // Create FormData for file upload
       const formData = new FormData()
-      formData.append('username', userData.username)
       formData.append('email', userData.email)
       formData.append('password1', userData.password1)
       formData.append('password2', userData.password2)
