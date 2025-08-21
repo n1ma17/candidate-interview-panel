@@ -4,14 +4,16 @@
       :id="id"
       @click="toggleDropdown"
       type="button"
+      :disabled="disabled"
       :class="[
         'w-full h-11 px-4 py-2.5 text-sm text-left border rounded-lg focus:outline-hidden focus:ring-3 transition-colors flex items-center justify-between',
         buttonClasses,
+        disabled ? 'opacity-50 cursor-not-allowed' : '',
       ]"
     >
-      <span :class="selectedItem ? 'text-gray-100' : 'text-gray-400'">
-        {{ displayText }}
-      </span>
+              <span :class="selectedItem ? 'text-gray-900' : 'text-gray-500'">
+          {{ displayText }}
+        </span>
       <ChevronDownIcon
         class="w-5 h-5 text-gray-400 transition-transform duration-200"
         :class="{ 'rotate-180': isOpen }"
@@ -32,7 +34,7 @@
         @click="selectItem(item)"
         class="px-4 py-3 text-sm text-gray-900 cursor-pointer hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
       >
-        {{ item.title }}
+        {{ item.name }}
       </div>
     </div>
   </div>
@@ -44,7 +46,7 @@ import { ChevronDownIcon } from '@/icons'
 
 interface SelectOption {
   id: number | string
-  title: string
+  name: string
 }
 
 interface Props {
@@ -53,13 +55,15 @@ interface Props {
   placeholder?: string
   id?: string
   buttonClasses?: string
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'انتخاب کنید',
   id: 'select-component',
   buttonClasses:
-    'text-gray-100 bg-transparent border-gray-100 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800',
+    'text-gray-900 bg-transparent border-gray-100 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800',
+  disabled: false,
 })
 
 const emit = defineEmits<{
@@ -78,7 +82,7 @@ const displayText = computed(() => {
   if (!selectedItem.value) {
     return props.placeholder
   }
-  return selectedItem.value.title
+  return selectedItem.value.name
 })
 
 const shouldOpenUpward = computed(() => {
@@ -97,6 +101,7 @@ const shouldOpenUpward = computed(() => {
 
 // Methods
 const toggleDropdown = () => {
+  if (props.disabled) return
   isOpen.value = !isOpen.value
 }
 

@@ -64,10 +64,10 @@ import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIc
 import { RouterLink } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useAuth } from '@/composables/useAuth'
+import { useAuthQuery } from '@/composables/useAuthQuery'
 
 const { t } = useI18n()
-const { user, logout } = useAuth()
+const { user, logout } = useAuthQuery()
 
 // Computed property for user initials
 const userInitials = computed(() => {

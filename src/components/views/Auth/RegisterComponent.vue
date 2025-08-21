@@ -1,27 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import SelectComponent from '@/components/common/SelectComponent.vue'
 import { useAuthQuery } from '@/composables/useAuthQuery'
 const { register, isLoading, clearError } = useAuthQuery()
 import { toast } from '@/composables/useToast'
+import categoriesService from '@/services/categoriesService'
+import type { Category } from '@/services/categoriesService'
 
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 const selectedFile = ref<File | null>(null)
 
-// Job positions array
-const jobPositions = ref([
-  { id: 1, title: 'توسعه‌دهنده Frontend' },
-  { id: 2, title: 'توسعه‌دهنده Backend' },
-  { id: 3, title: 'توسعه‌دهنده Full Stack' },
-  { id: 4, title: 'طراح UI/UX' },
-  { id: 5, title: 'مدیر پروژه' },
-  { id: 6, title: 'تست کننده نرم‌افزار' },
-  { id: 7, title: 'مدیر سیستم' },
-  { id: 8, title: 'تحلیلگر داده' },
-  { id: 9, title: 'متخصص DevOps' },
-  { id: 10, title: 'مدیر محصول' },
-])
+// Job categories from API
+const jobPositions = ref<Category[]>([])
+const isLoadingCategories = ref(false)
 const registerForm = ref({
   name: '',
   email: '',
@@ -75,6 +67,34 @@ const handleFileUpload = (event: Event) => {
   }
 }
 
+// Fetch categories from API
+const fetchCategories = async () => {
+  isLoadingCategories.value = true
+  try {
+    const response = await categoriesService.getCategories()
+    if (response && Array.isArray(response)) {
+      jobPositions.value = response
+    } else {
+      toast.error({
+        title: 'خطا در دریافت دسته‌بندی‌ها',
+        description: 'خطا در بارگذاری موقعیت‌های شغلی'
+      })
+    }
+  } catch {
+    toast.error({
+      title: 'خطا در دریافت دسته‌بندی‌ها',
+      description: 'خطا در ارتباط با سرور'
+    })
+  } finally {
+    isLoadingCategories.value = false
+  }
+}
+
+// Fetch categories when component mounts
+onMounted(() => {
+  fetchCategories()
+})
+
 const handleRegister = async () => {
   clearError()
 
@@ -96,9 +116,9 @@ const handleRegister = async () => {
   // Validate password has uppercase letter
   if (!/[A-Z]/.test(registerForm.value.password)) {
     return
-  }
+      }
 
-  await register(
+    await register(
     registerForm.value.name,
     registerForm.value.email,
     registerForm.value.password,
@@ -274,7 +294,11 @@ const handleRegister = async () => {
           :options="jobPositions"
           placeholder="موقعیت شغلی خود را انتخاب کنید"
           id="register-position"
+          :disabled="isLoadingCategories"
         />
+        <div v-if="isLoadingCategories" class="mt-2 text-xs text-gray-400">
+          <p>در حال بارگذاری موقعیت‌های شغلی...</p>
+        </div>
       </div>
 
       <!-- PDF Upload -->

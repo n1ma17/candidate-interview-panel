@@ -28,10 +28,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { useAuthQuery } from '@/composables/useAuthQuery'
 import ThemeToggler from '../common/ThemeToggler.vue'
 
-const { user } = useAuth()
+const { user } = useAuthQuery()
 
 // Computed property for user initials
 const userInitials = computed(() => {

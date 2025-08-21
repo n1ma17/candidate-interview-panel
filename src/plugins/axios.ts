@@ -104,24 +104,4 @@ api.interceptors.response.use(
   }
 )
 
-// Test function to debug CORS
-export const testCorsConnection = async () => {
-  try {
-    console.log('🧪 Testing CORS connection...')
-    const response = await api.get('/')
-    console.log('✅ CORS test successful:', response.data)
-    return true
-  } catch (error: unknown) {
-    const errorData = error as { code?: string; message?: string; response?: { status?: number; statusText?: string; headers?: Record<string, string> } }
-    console.error('❌ CORS test failed:', {
-      code: errorData.code,
-      message: errorData.message,
-      status: errorData.response?.status,
-      statusText: errorData.response?.statusText,
-      headers: errorData.response?.headers
-    })
-    return false
-  }
-}
-
 export default api

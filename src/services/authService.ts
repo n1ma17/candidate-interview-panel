@@ -105,7 +105,27 @@ class AuthService {
   // Register
   async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
     try {
-      const response = await api.post<ApiResponse<AuthResponse>>('auth/registration/', userData)
+      // Create FormData for file upload
+      const formData = new FormData()
+      formData.append('username', userData.username)
+      formData.append('email', userData.email)
+      formData.append('password1', userData.password1)
+      formData.append('password2', userData.password2)
+
+      if (userData.position) {
+        formData.append('position', userData.position.toString())
+      }
+
+      if (userData.resume) {
+        formData.append('resume', userData.resume)
+      }
+
+      // Use FormData instead of JSON for file upload
+      const response = await api.post<ApiResponse<AuthResponse>>('auth/registration/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
 
       if (response.data.success && response.data.data) {
         // Set tokens in cookies
