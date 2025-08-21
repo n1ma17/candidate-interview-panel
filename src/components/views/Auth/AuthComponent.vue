@@ -57,7 +57,7 @@
     <!-- Right Side -->
     <div
       class="hidden lg:flex w-1/2 bg-cover bg-center"
-      style="background-image: url('/images/views/auth.png')"
+      style="background-image: url('/images/views/AI.jpg')"
     ></div>
   </div>
 </template>
