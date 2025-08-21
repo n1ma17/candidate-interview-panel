@@ -14,12 +14,16 @@
         <ThemeToggler />
         <div class="flex items-center text-gray-700 dark:text-gray-400">
           <span
+            v-if="userData"
             class="ml-3 flex items-center justify-center rounded-full h-10 w-10 text-white font-medium text-base"
             style="background-color: #1d2939"
           >
             {{ userInitials }}
           </span>
-          <span class="block font-medium text-theme-sm">{{ user?.name || 'کاربر' }}</span>
+          <span v-if="userData" class="block font-medium text-theme-sm">
+            {{ userDisplayName }}
+          </span>
+          <span v-else class="block font-medium text-theme-sm">کاربر</span>
         </div>
       </div>
     </div>
@@ -27,25 +31,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useAuthQuery } from '@/composables/useAuthQuery'
 import ThemeToggler from '../common/ThemeToggler.vue'
+import { ref, computed, onMounted } from 'vue'
 
-const { user } = useAuthQuery()
+interface UserData {
+  pk: number
+  email: string
+  first_name: string
+  last_name: string
+}
 
-// Computed property for user initials
+const userData = ref<UserData | null>(null)
+
+// Compute user initials from first and last name
 const userInitials = computed(() => {
-  if (!user.value?.name) return 'کا' // Default Persian initials for "کاربر"
+  if (!userData.value) return ''
+  const first = userData.value.first_name?.charAt(0) || ''
+  const last = userData.value.last_name?.charAt(0) || ''
+  return (first + last).toUpperCase()
+})
 
-  const name = user.value.name.trim()
-  const words = name.split(' ')
+// Compute display name
+const userDisplayName = computed(() => {
+  if (!userData.value) return ''
+  const firstName = userData.value.first_name || ''
+  const lastName = userData.value.last_name || ''
+  return `${firstName} ${lastName}`.trim() || userData.value.email
+})
 
-  if (words.length >= 2) {
-    // Get first letter of first and last name
-    return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-  } else {
-    // Get first two letters of single name
-    return name.substring(0, 2).toUpperCase()
+onMounted(() => {
+  // Read user data from localStorage
+  try {
+    const storedUserData = localStorage.getItem('userData')
+    if (storedUserData) {
+      userData.value = JSON.parse(storedUserData)
+      console.log('👤 User data loaded from localStorage:', userData.value)
+    }
+  } catch (error) {
+    console.error('❌ Error reading user data from localStorage:', error)
   }
 })
 </script>

@@ -1,10 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { ref, computed, watch } from 'vue'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import authService, {
   type LoginRequest,
   type RegisterRequest,
-  type AuthResponse,
 } from '@/services/authService'
 import cookieManager from '@/utils/cookies'
 
@@ -13,26 +12,12 @@ export const useAuthQuery = () => {
   const queryClient = useQueryClient()
 
   // State
-  const user = ref<AuthResponse['user'] | null>(null)
   const error = ref<string | null>(null)
 
   // Computed properties
   const isAuthenticated = computed(() => cookieManager.isAuthenticated())
 
-  // Initialize auth state from cookies and localStorage
-  const initAuth = () => {
-    const savedUser = localStorage.getItem('auth_user')
 
-    if (savedUser && cookieManager.isAuthenticated()) {
-      try {
-        user.value = JSON.parse(savedUser)
-      } catch (e) {
-        console.error('Error parsing saved user data:', e)
-        localStorage.removeItem('auth_user')
-        cookieManager.removeAllTokens()
-      }
-    }
-  }
 
   // Login mutation
   const loginMutation = useMutation({
@@ -40,17 +25,13 @@ export const useAuthQuery = () => {
     onSuccess: (response) => {
       console.log('🎯 Login response structure:', response)
       const responseData = response as unknown as {
-        user?: unknown
         access?: unknown
         refresh_token?: unknown
-        data?: { user?: unknown; access?: unknown; refresh_token?: unknown }
+        data?: { access?: unknown; refresh_token?: unknown }
       }
-      const userData = responseData.user || responseData.data?.user || responseData
       const accessToken = responseData.access || responseData.data?.access
       const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
-      if (userData && accessToken && typeof accessToken === 'string') {
-        user.value = userData as AuthResponse['user']
-        localStorage.setItem('auth_user', JSON.stringify(userData))
+      if (accessToken && typeof accessToken === 'string') {
         // Set tokens in cookies
         cookieManager.setAccessToken(accessToken, 15)
         if (refreshToken && typeof refreshToken === 'string')
@@ -73,21 +54,16 @@ export const useAuthQuery = () => {
 
 
 
-      // Check if user data is directly in response or in nested structure
+      // Check if response has access token
       const responseData = response as unknown as {
-        user?: unknown
         access?: unknown
         refresh_token?: unknown
-        data?: { user?: unknown; access?: unknown; refresh_token?: unknown }
+        data?: { access?: unknown; refresh_token?: unknown }
       }
-      const userData = responseData.user || responseData.data?.user || responseData
       const accessToken = responseData.access || responseData.data?.access
       const refreshToken = responseData.refresh_token || responseData.data?.refresh_token
 
-      if (userData && accessToken && typeof accessToken === 'string') {
-        user.value = userData as AuthResponse['user']
-        localStorage.setItem('auth_user', JSON.stringify(userData))
-
+      if (accessToken && typeof accessToken === 'string') {
         // Set tokens in cookies
         cookieManager.setAccessToken(accessToken, 15)
         if (refreshToken && typeof refreshToken === 'string')
@@ -95,8 +71,6 @@ export const useAuthQuery = () => {
 
         error.value = null
         router.push('/')
-      } else {
-        error.value = 'اطلاعات کاربر یا توکن در دسترس نیست'
       }
     },
     onError: (err: Error) => {
@@ -108,49 +82,19 @@ export const useAuthQuery = () => {
   const logoutMutation = useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
-      user.value = null
-      localStorage.removeItem('auth_user')
       cookieManager.removeAllTokens()
       queryClient.clear()
       router.push('/signin')
     },
     onError: () => {
       // Even if logout fails, clear local state
-      user.value = null
-      localStorage.removeItem('auth_user')
       cookieManager.removeAllTokens()
       queryClient.clear()
       router.push('/signin')
     },
   })
 
-  // Get current user query
-  const { data: currentUser, isLoading: isLoadingUser } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => authService.getCurrentUser(),
-    enabled: cookieManager.isAuthenticated(),
-  })
 
-  // Watch for query data changes
-  watch(currentUser, (response) => {
-    if (response?.success && response.data) {
-      user.value = response.data
-      localStorage.setItem('auth_user', JSON.stringify(response.data))
-    }
-  })
-
-  // Watch for query errors
-  watch(
-    () => currentUser.value,
-    (response) => {
-      if (response && !response.success) {
-        // If getting user fails, clear auth state
-        user.value = null
-        localStorage.removeItem('auth_user')
-        cookieManager.removeAllTokens()
-      }
-    },
-  )
 
   // Login function
   const login = async (email: string, password: string) => {
@@ -193,19 +137,16 @@ export const useAuthQuery = () => {
 
   return {
     // State
-    user: computed(() => user.value),
     isLoading: computed(
       () =>
         loginMutation.isPending.value ||
         registerMutation.isPending.value ||
         logoutMutation.isPending.value,
     ),
-    isLoadingUser: computed(() => isLoadingUser.value),
     error: computed(() => error.value),
     isAuthenticated,
 
     // Methods
-    initAuth,
     login,
     register,
     logout,

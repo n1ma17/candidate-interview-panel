@@ -21,7 +21,7 @@ api.interceptors.request.use(
     const token = cookieManager.getAccessToken()
 
     if (token) {
-      config.headers.Authorization = `JWT ${token}`
+      config.headers.Authorization = `Bearer ${token}`
     }
 
     // Add Origin header only
@@ -66,6 +66,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
+      // Don't redirect for certain endpoints that might fail due to authentication
+      const skipRedirectEndpoints = ['/auth/user', 'auth/user']
+      const shouldSkipRedirect = skipRedirectEndpoints.some(endpoint =>
+        originalRequest.url?.includes(endpoint)
+      )
+
       try {
         // Try to refresh the token
         const refreshToken = cookieManager.getRefreshToken()
@@ -85,7 +91,7 @@ api.interceptors.response.use(
             // Retry original request with new token
             const newToken = cookieManager.getAccessToken()
             if (newToken) {
-              originalRequest.headers.Authorization = `JWT ${newToken}`
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
               return api(originalRequest)
             }
           }
@@ -94,10 +100,14 @@ api.interceptors.response.use(
         console.error('Token refresh failed:', refreshError)
       }
 
-      // If refresh fails, clear all tokens and redirect to login
-      cookieManager.removeAllTokens()
-      localStorage.removeItem('auth_user')
-      window.location.href = '/signin'
+      // If refresh fails and we should redirect, clear all tokens and redirect to login
+      if (!shouldSkipRedirect) {
+        cookieManager.removeAllTokens()
+        localStorage.removeItem('auth_user')
+        window.location.href = '/signin'
+      } else {
+        console.log('🔄 Skipping redirect for endpoint:', originalRequest.url)
+      }
     }
 
     return Promise.reject(error)

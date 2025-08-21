@@ -57,14 +57,27 @@ import AdminLayout from '../components/layout/AdminLayout.vue'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import authService from '../services/authService'
 
 const router = useRouter()
 const { t } = useI18n()
 const isInterviewCompleted = ref()
 
-onMounted(() => {
+onMounted(async () => {
   // Check if interview is completed in localStorage
   const completedInterview = localStorage.getItem('completeInterview')
   isInterviewCompleted.value = completedInterview
+
+  // Fetch user data from API and store in localStorage
+  try {
+    const userResponse = await authService.getUserData()
+    if (userResponse.success && userResponse.data) {
+      console.log('✅ User data fetched successfully:', userResponse.data)
+    } else {
+      console.error('❌ Failed to fetch user data:', userResponse.error)
+    }
+  } catch (error) {
+    console.error('❌ Error fetching user data:', error)
+  }
 })
 </script>

@@ -35,6 +35,13 @@ export interface RefreshTokenResponse {
   expires_in: number
 }
 
+export interface UserData {
+  pk: number
+  email: string
+  first_name: string
+  last_name: string
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data?: T
@@ -162,20 +169,7 @@ class AuthService {
     }
   }
 
-  // Get current user
-  async getCurrentUser(): Promise<ApiResponse<AuthResponse['user']>> {
-    try {
-      const response = await api.get<ApiResponse<AuthResponse['user']>>('/auth/me')
-      return response.data
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'خطا در دریافت اطلاعات کاربر'
-      const apiError = (error as ApiError)?.response?.data?.message
-      return {
-        success: false,
-        error: apiError || errorMessage
-      }
-    }
-  }
+
 
   // Refresh token
   async refreshToken(): Promise<ApiResponse<RefreshTokenResponse>> {
@@ -210,6 +204,42 @@ class AuthService {
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return cookieManager.isAuthenticated()
+  }
+
+  // Get user data from API and store in localStorage
+  async getUserData(): Promise<ApiResponse<UserData>> {
+    try {
+      const response = await api.get<UserData>('auth/user/')
+
+      if (response.data) {
+        // Store user data in localStorage
+        localStorage.setItem('userData', JSON.stringify(response.data))
+      }
+
+      return {
+        success: true,
+        data: response.data
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'خطا در دریافت اطلاعات کاربر'
+      const apiError = (error as ApiError)?.response?.data?.message
+
+      return {
+        success: false,
+        error: apiError || errorMessage
+      }
+    }
+  }
+
+  // Get user data from localStorage
+  getUserDataFromStorage(): UserData | null {
+    try {
+      const userData = localStorage.getItem('userData')
+      return userData ? JSON.parse(userData) : null
+    } catch (error) {
+      console.error('Error parsing user data from localStorage:', error)
+      return null
+    }
   }
 
   // Get access token expiration

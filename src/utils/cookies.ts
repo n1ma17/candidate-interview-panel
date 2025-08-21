@@ -1,12 +1,4 @@
-interface TokenData {
-  token: string
-  expiresAt: number
-}
 
-interface RefreshTokenData {
-  token: string
-  expiresAt: number
-}
 
 class CookieManager {
   // Set access token cookie

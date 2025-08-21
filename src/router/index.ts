@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import cookieManager from '@/utils/cookies'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,7 +52,7 @@ router.beforeEach((to, from, next) => {
 
 
   // Check authentication status (both localStorage and sessionStorage)
-  const isAuthenticated = !!(localStorage.getItem('auth_user') || sessionStorage.getItem('auth_user'))
+  const isAuthenticated = !!(cookieManager.isAuthenticated())
 
   // If route requires authentication and user is not authenticated
   if (to.meta.requiresAuth && !isAuthenticated) {
