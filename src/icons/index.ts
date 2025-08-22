@@ -12,6 +12,7 @@ import DocIcon from "./DocIcon.vue";
 import RolesIcon from "./RolesIcon.vue";
 import SupportIcon from "./SupportIcon.vue";
 import ProfileIcon from "./ProfileIcon.vue";
+import VoiceIcon from "./VoiceIcon.vue";
 
 export {
   HorizontalDots,
@@ -27,5 +28,6 @@ export {
   DocIcon,
   RolesIcon,
   SupportIcon,
-  ProfileIcon
-};
+  ProfileIcon,
+  VoiceIcon
+}

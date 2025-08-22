@@ -6,7 +6,7 @@
       <!-- Error message -->
       <div
         v-if="error"
-        class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
+        class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-[12px] dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
       >
         {{ error }}
       </div>
@@ -18,7 +18,7 @@
           <img class="w-[160px] h-[68px]" src="/images/logo/logo-en.jpg" alt="Logo" />
         </div>
         <!-- Tabs -->
-        <div class="flex justify-between mb-6 border-b">
+        <div class="flex justify-between mb-6 border-b ">
           <button
             :class="[
               'flex-1 py-2 text-center font-semibold transition',
@@ -56,7 +56,7 @@
 
     <!-- Right Side -->
     <div
-      class="hidden lg:flex w-1/2 bg-cover bg-center"
+      class="rounded-[12px] shadow-xl hidden lg:flex w-1/2 bg-cover bg-center"
       style="background-image: url('/images/views/AI.jpg')"
     ></div>
   </div>

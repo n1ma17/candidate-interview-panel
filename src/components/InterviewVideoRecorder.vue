@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full ">
+  <div class="w-full">
     <!-- Controls Section -->
-    <div class="w-full  text-center">
+    <div v-if="state.currentQuestionIndex === -1" class="w-full text-center">
       <div class="w-full space-y-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
           <button
@@ -40,17 +40,15 @@
     <div
       v-if="currentQuestion"
       :class="[
-        'question-box mt-3 flex flex-col h-[calc(100dvh-240px)]  rounded-2xl border transition-all duration-300 bg-white px-4 py-4 dark:bg-white/[0.03] xl:px-8 xl:py-6',
-        state.isRecording
-          ? 'border-red-500 shadow-lg shadow-red-500/20'
-          : 'border-gray-200 dark:border-gray-800',
+        'question-box mt-3 flex flex-col h-[calc(100dvh-240px)]   transition-all duration-300   dark:bg-white/[0.03]',
       ]"
     >
       <div class="w-full text-center h-full flex flex-col">
         <div v-if="currentQuestion" class="space-y-3 flex-1 flex flex-col">
-          <div class="flex items-center justify-between mb-4">
+          <!-- <div class="flex items-center justify-between mb-4">
             <span class="text-sm text-gray-500 dark:text-gray-400">
-              {{ t('interview.question') }} {{ state.currentQuestionIndex + 1 }} {{ t('interview.of') }} {{ questions.length }}
+              {{ t('interview.question') }} {{ state.currentQuestionIndex + 1 }}
+              {{ t('interview.of') }} {{ questions.length }}
             </span>
             <div class="flex items-center gap-2">
               <div
@@ -60,25 +58,56 @@
                 :key="i"
               ></div>
             </div>
-          </div>
+          </div> -->
 
-          <h3 class="text-sm lg:text-lg font-semibold text-gray-900 dark:text-white mb-4 text-left">
-            {{ currentQuestion.description }}
-          </h3>
-
-          <div class="flex flex-col lg:flex-row-reverse items-stretch justify-between lg:justify-start gap-3 w-full flex-1">
+          <div
+            class="flex flex-col-reverse lg:flex-row-reverse items-stretch justify-between lg:justify-start gap-3 w-full flex-1"
+          >
+            <!-- Notes Section -->
+            <div
+              class="w-full h-fit lg:w-1/3 lg:h-full p-3 lg:p-4 bg-gray-200 dark:bg-gray-800 rounded-[12px] flex flex-col justify-between"
+            >
+              <div class="w-full hidden h-[calc(100%-80px)] lg:flex">sss</div>
+              <div class="w-full h-[80px] flex gap-2 items-center justify-between">
+                <input
+                  v-model="notes"
+                  :placeholder="t('notes.placeholder')"
+                  class="w-3/2 p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+                <div class="flex items-center justify-end h-6 lg:h-8">
+                  <button
+                    @click="saveNote"
+                    :disabled="!notes.trim()"
+                    class="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 text-white bg-primary rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg
+                      class="w-3 h-3 lg:w-4 lg:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
             <!-- Video Display -->
-            <div class="relative w-full h-[70%] lg:w-1/2 h-48 lg:h-full lg:min-h-[300px]">
-              <div class="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
+            <div class="relative w-full h-[calc(100%-80px)] lg:w-2/3 h-48 lg:h-full lg:min-h-[300px]">
+              <div
+                class="relative w-full h-full bg-gray-200 dark:bg-gray-800 rounded-[12px] overflow-hidden"
+              >
                 <video
                   ref="previewVideo"
                   autoplay
                   muted
                   playsinline
                   class="absolute inset-0 w-full h-full object-cover"
-                  :class="[
-                    state.isRecording ? 'border-2 border-red-500' : 'border-2 border-gray-300',
-                  ]"
                   @loadedmetadata="() => console.log('Video metadata loaded')"
                   @canplay="() => console.log('Video can play')"
                   @playing="() => console.log('Video is playing')"
@@ -91,12 +120,34 @@
                 class="absolute top-2 right-2 flex items-center gap-1 z-10"
               >
                 <div class="w-2 h-2 lg:w-3 lg:h-3 bg-red-500 rounded-full animate-pulse"></div>
-                <div class="flex items-center gap-1 bg-red-600 text-white px-1.5 py-0.5 lg:px-2 lg:py-1 rounded text-xs font-medium">
-                  <svg class="w-2 h-2 lg:w-3 lg:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                <div
+                  class="flex items-center gap-1 bg-red-600 text-white px-1.5 py-0.5 lg:px-2 lg:py-1 rounded text-xs font-medium"
+                >
+                  <svg
+                    class="w-2 h-2 lg:w-3 lg:h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    ></path>
                   </svg>
-                  <svg class="w-2 h-2 lg:w-3 lg:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                  <svg
+                    class="w-2 h-2 lg:w-3 lg:h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                    ></path>
                   </svg>
                 </div>
               </div>
@@ -115,32 +166,48 @@
                 {{ t('interview.ready') }}
               </div>
             </div>
-
-            <!-- Notes Section -->
-            <div class="w-full h-[30%] lg:w-1/2  lg:h-full lg:min-h-[300px]">
-              <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 lg:p-4 h-full flex gap-2 items-center lg:items-end lg:justify-between lg:flex-col">
-                <textarea
-                  v-model="notes"
-                  :placeholder="t('notes.placeholder')"
-                  class="w-full lg:min-h-[80%] p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
-                ></textarea>
-                <div class="flex items-center justify-end mt-2 lg:mt-3 h-6 lg:h-8">
-                  <button
-                    @click="saveNote"
-                    :disabled="!notes.trim()"
-                    class="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 text-white bg-primary rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
+          </div>
+          <!-- Question Description -->
+          <div class="flex flex-col lg:flex-row items-start justify-between w-full">
+            <span
+              class="flex items-center gap-2 text-[16px] lg:text-[16px] mb-4 lg:mb-0 font-[7oo] text-primary dark:text-white mt-2 text-left"
+            >
+              <VoiceIcon class="w-8 h-8 text-success-500" />
+              {{ currentQuestion.description }}
+            </span>
+            <div class="flex items-center w-full lg:w-fit justify-between gap-2">
+              <span class="text-sm text-gray-500 dark:text-gray-400"
+                >{{ t('interview.question') }} {{ state.currentQuestionIndex + 1 }}
+                {{ t('interview.of') }} {{ questions.length }}</span
+              >
+              <button
+                @click="handleMainButton"
+                :disabled="state.isProcessing"
+                class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2 text-base font-medium text-white shadow-lg transition-all duration-200 hover:bg-primary-hover hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg
+                  v-if="state.isProcessing"
+                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                {{ buttonText }}
+              </button>
             </div>
           </div>
         </div>
@@ -186,9 +253,13 @@
                 />
               </svg>
             </div>
-                        <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('permissions.cameraAccess') }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('permissions.cameraDescription') }}</p>
+            <div>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ t('permissions.cameraAccess') }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ t('permissions.cameraDescription') }}
+              </p>
             </div>
           </div>
 
@@ -211,15 +282,31 @@
               </svg>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('permissions.microphoneAccess') }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('permissions.microphoneDescription') }}</p>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ t('permissions.microphoneAccess') }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ t('permissions.microphoneDescription') }}
+              </p>
             </div>
           </div>
 
-          <div class="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+          <div
+            class="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+          >
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <svg
+                class="w-4 h-4 text-blue-600 dark:text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
               </svg>
               <p class="text-sm text-blue-700 dark:text-blue-300">
                 {{ t('permissions.separateRecording') }}
@@ -262,7 +349,9 @@
             <div class="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-4">
               {{ modals.waitingTime }}
             </div>
-            <p class="text-gray-600 dark:text-gray-300">{{ t('interview.nextQuestionPreparing') }}</p>
+            <p class="text-gray-600 dark:text-gray-300">
+              {{ t('interview.nextQuestionPreparing') }}
+            </p>
           </div>
         </div>
       </template>
@@ -275,6 +364,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ModalComponent from './common/ModalComponent.vue'
 import { toast } from '@/composables/useToast'
+import { VoiceIcon } from '@/icons'
 
 // Types
 interface Question {
@@ -291,7 +381,7 @@ interface QuestionResponse {
   audioBlob: Blob | null
   transcript: string
   duration: number
-  timestamp: Date,
+  timestamp: Date
   note: string[] | null | []
 }
 
@@ -358,7 +448,8 @@ const currentQuestion = computed(() => {
 const buttonText = computed(() => {
   if (state.value.currentQuestionIndex === -1) return t('interview.startInterview')
   if (state.value.isRecording) return t('interview.endAnswer')
-  if (state.value.currentQuestionIndex < props.questions.length - 1) return t('interview.nextQuestion')
+  if (state.value.currentQuestionIndex < props.questions.length - 1)
+    return t('interview.nextQuestion')
   return t('interview.finishInterview')
 })
 
@@ -384,7 +475,10 @@ const stopTimer = () => {
 }
 
 // Media Stream Management
-const getMediaStream = async (): Promise<{ videoStream: MediaStream | null, audioStream: MediaStream | null }> => {
+const getMediaStream = async (): Promise<{
+  videoStream: MediaStream | null
+  audioStream: MediaStream | null
+}> => {
   let videoStream: MediaStream | null = null
   let audioStream: MediaStream | null = null
 
@@ -395,7 +489,7 @@ const getMediaStream = async (): Promise<{ videoStream: MediaStream | null, audi
         // Get video stream
         videoStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: false
+          audio: false,
         })
       } catch (error) {
         console.log('Video stream failed:', error)
@@ -405,7 +499,7 @@ const getMediaStream = async (): Promise<{ videoStream: MediaStream | null, audi
         // Get audio stream
         audioStream = await navigator.mediaDevices.getUserMedia({
           video: false,
-          audio: true
+          audio: true,
         })
       } catch (error) {
         console.log('Audio stream failed:', error)
@@ -415,7 +509,7 @@ const getMediaStream = async (): Promise<{ videoStream: MediaStream | null, audi
       if (!videoStream && !audioStream) {
         const combinedStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: true
+          audio: true,
         })
         videoStream = combinedStream
         audioStream = combinedStream
@@ -535,7 +629,9 @@ const startRecording = async () => {
         ? 'video/webm'
         : 'video/mp4'
 
-    state.value.mediaRecorder = new MediaRecorder(state.value.mediaStream, { mimeType: videoMimeType })
+    state.value.mediaRecorder = new MediaRecorder(state.value.mediaStream, {
+      mimeType: videoMimeType,
+    })
 
     state.value.mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
@@ -545,9 +641,10 @@ const startRecording = async () => {
 
     state.value.mediaRecorder.onstop = () => {
       const videoBlob = new Blob(state.value.recordingChunks, { type: videoMimeType })
-      const audioBlob = state.value.audioChunks.length > 0
-        ? new Blob(state.value.audioChunks, { type: 'audio/webm' })
-        : null
+      const audioBlob =
+        state.value.audioChunks.length > 0
+          ? new Blob(state.value.audioChunks, { type: 'audio/webm' })
+          : null
       saveQuestionResponse(videoBlob, audioBlob)
     }
 
@@ -559,7 +656,9 @@ const startRecording = async () => {
           ? 'audio/webm'
           : 'audio/mp4'
 
-      state.value.audioRecorder = new MediaRecorder(state.value.audioStream, { mimeType: audioMimeType })
+      state.value.audioRecorder = new MediaRecorder(state.value.audioStream, {
+        mimeType: audioMimeType,
+      })
 
       state.value.audioRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -651,7 +750,7 @@ const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) =>
     transcript: '',
     duration: state.value.recordingTime,
     timestamp: new Date(),
-    note: questionNotes.value[currentQuestion.value?.id || 0] || null
+    note: questionNotes.value[currentQuestion.value?.id || 0] || null,
   }
 
   state.value.responses.push(response)

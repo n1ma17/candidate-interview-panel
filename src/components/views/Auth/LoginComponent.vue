@@ -27,7 +27,7 @@ const handleLogin = async () => {
       <div>
         <label
           for="login-email"
-          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
+          class="mb-1.5 block text-sm font-medium text-gray-900"
         >
           ایمیل<span class="text-error-500">*</span>
         </label>
@@ -37,14 +37,14 @@ const handleLogin = async () => {
           id="login-email"
           name="email"
           placeholder="ایمیل خود را وارد کنید"
-          class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          class="h-11 w-full rounded-lg border border-gray-100 bg-transparent px-4 py-2.5 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
         />
       </div>
       <!-- Password -->
       <div>
         <label
           for="login-password"
-          class="mb-1.5 block text-sm font-medium text-gray-900 dark:text-gray-100"
+          class="mb-1.5 block text-sm font-medium text-gray-900"
         >
           رمز عبور<span class="text-error-500">*</span>
         </label>
@@ -54,11 +54,11 @@ const handleLogin = async () => {
             :type="showLoginPassword ? 'text' : 'password'"
             id="login-password"
             placeholder="رمز عبور خود را وارد کنید"
-            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            class="h-11 w-full rounded-lg border border-gray-100 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-900 shadow-theme-xs placeholder:text-gray-500 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
           />
           <span
             @click="showLoginPassword = !showLoginPassword"
-            class="absolute z-30 text-gray-500 -translate-y-1/2 cursor-pointer left-4 top-1/2 dark:text-gray-400"
+            class="absolute z-30 text-gray-500 -translate-y-1/2 cursor-pointer left-4 top-1/2"
           >
             <svg
               v-if="!showLoginPassword"
@@ -104,7 +104,7 @@ const handleLogin = async () => {
         <div>
           <label
             for="keepLoggedIn"
-            class="flex items-center text-sm font-normal text-gray-900 cursor-pointer select-none dark:text-gray-100"
+            class="flex items-center text-sm font-normal text-gray-900 cursor-pointer select-none"
           >
             <div class="relative ml-3">
               <input v-model="keepLoggedIn" type="checkbox" id="keepLoggedIn" class="sr-only" />
@@ -112,7 +112,7 @@ const handleLogin = async () => {
                 :class="
                   keepLoggedIn
                     ? 'border-brand-500 bg-brand-500'
-                    : 'bg-transparent border-gray-300 dark:border-gray-700'
+                    : 'bg-transparent border-gray-300'
                 "
                 class="mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px]"
               >
