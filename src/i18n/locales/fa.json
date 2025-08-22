@@ -95,5 +95,11 @@
     "settings": "تنظیمات حساب کاربری",
     "support": "پشتیبانی",
     "logout": "خروج"
+  },
+  "dashboard": {
+    "rejected": "رد شده",
+    "in_progress": "در حال انجام",
+    "completed": "تکمیل شده",
+    "accepted": "قبول شده"
   }
 } 

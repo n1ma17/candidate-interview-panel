@@ -40,6 +40,8 @@ export interface UserData {
   email: string
   first_name: string
   last_name: string
+  status: string
+  phase: string
 }
 
 export interface ApiResponse<T> {

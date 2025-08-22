@@ -9,24 +9,93 @@
           {{ persianDate }}
         </p>
       </div>
-      <div class="w-full md:w-unset flex items-end justify-start gap-8">
+      <div class="w-full md:w-unset flex items-center justify-start gap-8">
         <div
-          class="w-[30%] text-white md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 bg-primary rounded-[12px] cursor-pointer shadow-md"
+          :class="[
+            'w-[30%] text-white md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] cursor-pointer shadow-md transition-all duration-200',
+            phase === 'initiate'
+              ? status === 'accepted'
+                ? 'bg-success-700 opacity-100'
+                : status === 'rejected'
+                  ? 'bg-error-700'
+                  : 'bg-primary opacity-100'
+              : 'bg-success-700 opacity-50',
+          ]"
         >
-          <SupportIcon class="text-white" />
-          <span class="text-white text-sm"> پشتیبانی </span>
+          <InvestigatIcon
+            v-if="phase === 'initiate' && status === 'in_progress'"
+            class="text-white w-[32px] h-[32px]"
+          />
+          <InvestigatComplete
+            v-else-if="phase === 'initiate' && status === 'accepted'"
+            class="text-white w-[32px] h-[32px]"
+          />
+          <InvestigateReject
+            v-else-if="phase === 'initiate' && status === 'rejected'"
+            class="text-white w-[32px] h-[32px]"
+          />
+          <AcceptIcon v-else-if="phase !== 'initiate'" class="text-white w-[32px] h-[32px]" />
+          <span class="text-white text-sm"> بررسی مدارک </span>
         </div>
+        <StepArrowIcon class="text-gray-400 w-[24px] h-[24px]" />
         <div
-          class="w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 bg-primary rounded-[12px] cursor-pointer shadow-md text-white"
+          :class="[
+            'w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
+            phase === 'hr'
+              ? status === 'accepted'
+                ? 'bg-success-700 opacity-100'
+                : status === 'rejected'
+                  ? 'bg-error-700'
+                  : 'bg-primary opacity-100'
+              : phase === 'hr'
+                ? 'bg-success-700 opacity-80'
+                : phase === 'tech'
+                  ? 'bg-success-700 opacity-50'
+                  : 'bg-gray-400 opacity-80',
+          ]"
         >
-          <ProfileIcon class="text-white" />
-          <span class="text-white text-sm"> اطلاعات کاربری </span>
+          <InvestigatIcon v-if="phase === 'hr' && status === 'in_progress'" class="text-white" />
+          <AcceptIcon v-else-if="phase === 'tech'" class="text-white w-[32px] h-[32px]" />
+          <InvestigatComplete
+            v-else-if="phase === 'hr' && status === 'accepted'"
+            class="text-white"
+          />
+          <InvestigateReject
+            v-else-if="phase === 'hr' && status === 'rejected'"
+            class="text-white"
+          />
+          <InvestigatIcon v-else-if="phase !== 'hr'" class="text-white" />
+          <span class="text-white text-sm"> منابع انسانی </span>
         </div>
+        <StepArrowIcon class="text-gray-400 w-[24px] h-[24px]" />
         <div
-          class="w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 bg-primary rounded-[12px] cursor-pointer shadow-md text-white"
+          :class="[
+            'w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
+            phase === 'tech'
+              ? status === 'accepted'
+                ? 'bg-success-700 opacity-100'
+                : status === 'rejected'
+                  ? 'bg-error-700'
+                  : 'bg-primary opacity-100'
+              : phase === 'tech'
+                ? 'bg-success-700 opacity-80'
+                : 'bg-gray-400 opacity-80',
+          ]"
         >
-          <RolesIcon class="text-white" />
-          <span class="text-white text-sm"> قوانین </span>
+          <InvestigatIcon
+            v-if="phase === 'tech' && status === 'in_progress'"
+            class="text-white"
+          />
+          <AcceptIcon
+            v-else-if="phase === 'tech' && status === 'accepted'"
+            class="text-white"
+          />
+          <InvestigateReject
+            v-else-if="phase === 'tech' && status === 'rejected'"
+            class="text-white"
+          />
+          <InvestigatIcon v-else-if="phase !== 'tech'" class="text-white" />
+          <span class="text-white text-sm"> مصاحبه فنی </span>
         </div>
       </div>
     </div>
@@ -52,8 +121,11 @@
           <!-- User Info -->
           <div class="w-half flex flex-col items-start justify-start gap-2">
             <h3 class="text-lg font-semibold truncate">وضعیت</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-              {{ status || 'در حال انتظار' }}
+            <p
+              class="text-[12px] text-gray-500 dark:text-gray-400 truncate"
+              :class="`${colorHandler}`"
+            >
+              {{ $t(`dashboard.${status}`) }}
             </p>
           </div>
           <span
@@ -73,19 +145,35 @@ import { computed, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import ListIcon from '@/icons/ListIcon.vue'
 import { ChevronLeftIcon } from '@/icons'
-import RolesIcon from '@/icons/RolesIcon.vue'
-import SupportIcon from '@/icons/SupportIcon.vue'
-import ProfileIcon from '@/icons/ProfileIcon.vue'
+import InvestigatIcon from '@/icons/InvestigatIcon.vue'
+import InvestigatComplete from '@/icons/InvestigatComplete.vue'
+import InvestigateReject from '@/icons/InvestigateReject.vue'
+import AcceptIcon from '@/icons/AcceptIcon.vue'
+import StepArrowIcon from '@/icons/StepArrowIcon.vue'
 
 // Props
 interface Props {
   status?: string
+  phase?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   status: '',
+  phase: '',
 })
-
+const colorHandler = computed(() => {
+  if (props.status === 'rejected') {
+    return 'text-red-500'
+  } else if (props.status === 'in_progress') {
+    return 'text-yellow-500'
+  } else if (props.status === 'completed') {
+    return 'text-blue-500'
+  } else if (props.status === 'accepted') {
+    return 'text-success-500'
+  } else {
+    return 'text-gray-500'
+  }
+})
 // Interview progress data
 const interviewProgress = ref(75) // Progress percentage
 

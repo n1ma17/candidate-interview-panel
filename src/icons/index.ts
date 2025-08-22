@@ -13,6 +13,10 @@ import RolesIcon from "./RolesIcon.vue";
 import SupportIcon from "./SupportIcon.vue";
 import ProfileIcon from "./ProfileIcon.vue";
 import VoiceIcon from "./VoiceIcon.vue";
+import InvestigatIcon from "./InvestigatIcon.vue";
+import InvestigatComplete from "./InvestigatComplete.vue";
+import InvestigateReject from "./InvestigateReject.vue";
+import AcceptIcon from "./AcceptIcon.vue";
 
 export {
   HorizontalDots,
@@ -29,5 +33,9 @@ export {
   RolesIcon,
   SupportIcon,
   ProfileIcon,
-  VoiceIcon
+  VoiceIcon,
+  InvestigatIcon,
+  InvestigatComplete,
+  InvestigateReject,
+  AcceptIcon
 }
