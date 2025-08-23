@@ -46,7 +46,7 @@ onMounted(async () => {
     if (userResponse.success && userResponse.data) {
       status.value = userResponse.data.status
       phase.value = userResponse.data.phase
-      if (status.value === 'in_progress' || phase.value === 'initiate') {
+      if (status.value === 'reject' || phase.value === 'initiate') {
         showInetrviewBtn.value = false
       } else {
         showInetrviewBtn.value = true
