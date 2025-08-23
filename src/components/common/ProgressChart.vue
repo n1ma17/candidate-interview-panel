@@ -11,17 +11,13 @@
             <VueApexCharts type="radialBar" height="330" :options="chartOptions" :series="series" />
           </div>
         </div>
-        <span
-          class="absolute left-1/2 top-[85%] -translate-x-1/2 -translate-y-[85%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500"
-          >+10%</span
-        >
       </div>
       <div class="w-full flex items-end justify-between mt-4">
         <div class="w-half flex flex-col items-start justify-start gap-2">
           <h3 class="text-lg font-semibold truncate text-gray-800 dark:text-white">وضعیت</h3>
           <p
-            class="text-[12px] text-gray-500 dark:text-gray-400 truncate"
-            :class="`${colorHandler}`"
+            class="text-[12px] text-gray-500 dark:text-gray-400 truncate rounded-[4px] py-[4px] px-[8px]"
+            :class="`text-white bg-${colorHandler}`"
           >
             {{ $t(`dashboard.${status}`) }}
           </p>
@@ -51,9 +47,26 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  phase: {
+    type: String,
+    default: '',
+  },
 })
 
-const series = computed(() => [props.value])
+const series = computed(() => [progressValue.value])
+
+// Calculate progress based on phase
+const progressValue = computed(() => {
+  const phases = ['initiate', 'hr', 'tech']
+  const currentIndex = phases.indexOf(props.phase)
+
+  if (currentIndex === -1) return props.value // fallback to original value
+
+  // Calculate percentage: each phase represents a portion of 100%
+  const phaseProgress = ((currentIndex + 1) / phases.length) * 100
+
+  return Math.round(phaseProgress)
+})
 
 const chartOptions = {
   colors: ['#465FFF'],
@@ -79,21 +92,21 @@ const chartOptions = {
         name: {
           show: false,
         },
-        value: {
-          fontSize: '36px',
-          fontWeight: '600',
-          offsetY: 60,
-          color: '#1D2939',
-          formatter: function (val: number) {
-            return val.toFixed(2) + '%'
+                  value: {
+            fontSize: '36px',
+            fontWeight: '600',
+            offsetY: 60,
+            color: '#1D2939',
+            formatter: function (val: number) {
+              return Math.round(val).toString() + '%'
+            },
           },
-        },
       },
     },
   },
   fill: {
     type: 'solid',
-    colors: ['#465FFF'],
+    colors: ['#1D2939'],
   },
   stroke: {
     lineCap: 'round',
@@ -102,15 +115,15 @@ const chartOptions = {
 }
 const colorHandler = computed(() => {
   if (props.status === 'rejected') {
-    return 'text-red-500'
+    return 'red-500'
   } else if (props.status === 'in_progress') {
-    return 'text-yellow-500'
+    return 'yellow-500'
   } else if (props.status === 'completed') {
-    return 'text-blue-500'
+    return 'blue-500'
   } else if (props.status === 'accepted') {
-    return 'text-success-500'
+    return 'success-500'
   } else {
-    return 'text-gray-500'
+    return 'gray-500'
   }
 })
 </script>

@@ -15,7 +15,7 @@
         <div class="flex items-center text-gray-700 dark:text-gray-400">
           <span
             v-if="userData"
-            class="ml-3 flex items-center justify-center rounded-full h-10 w-10 text-white font-medium text-base"
+            class="ml-3  items-center hidden md:flex justify-center rounded-full h-10 w-10 text-white font-medium text-base"
             style="background-color: #1d2939"
           >
             {{ userInitials }}
@@ -56,7 +56,7 @@ const userDisplayName = computed(() => {
   if (!userData.value) return ''
   const firstName = userData.value.first_name || ''
   const lastName = userData.value.last_name || ''
-  return `${firstName} ${lastName}`.trim() || userData.value.email
+  return `${firstName} ${lastName}`.trim() || userData.value.email.split('@')[0]
 })
 
 onMounted(() => {

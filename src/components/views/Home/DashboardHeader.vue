@@ -101,8 +101,7 @@
     </div>
     <!-- User Status Card -->
     <div class="w-full lg:w-[500px] mt-8 lg:mt-0">
-      <statistics-chart :status="status" />
-
+      <ProgressChart :status="status" :phase="phase" />
     </div>
   </div>
 </template>
@@ -115,7 +114,7 @@ import InvestigatComplete from '@/icons/InvestigatComplete.vue'
 import InvestigateReject from '@/icons/InvestigateReject.vue'
 import AcceptIcon from '@/icons/AcceptIcon.vue'
 import StepArrowIcon from '@/icons/StepArrowIcon.vue'
-import StatisticsChart from '@/components/common/StatisticsChart.vue'
+import ProgressChart from '@/components/common/ProgressChart.vue'
 
 // Props
 interface Props {

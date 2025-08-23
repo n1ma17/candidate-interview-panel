@@ -99,7 +99,7 @@ const userDisplayName = computed(() => {
   if (!userData.value) return ''
   const firstName = userData.value.first_name || ''
   const lastName = userData.value.last_name || ''
-  return `${firstName} ${lastName}`.trim() || userData.value.email
+  return `${firstName} ${lastName}`.trim() || userData.value.email.split('@')[0]
 })
 
 const dropdownOpen = ref(false)
