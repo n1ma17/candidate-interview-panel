@@ -74,6 +74,12 @@
     "save": "یادداشت ذخیره شد",
     "saveDesc": "یادداشت شما با موفقیت ذخیره شد"
   },
+  "chat": {
+    "noMessages": "هنوز پیامی وجود ندارد",
+    "startTyping": "شروع به تایپ پاسخ خود کنید...",
+    "characterCount": "{{count}} کاراکتر",
+    "pressEnter": "برای ارسال Enter را فشار دهید"
+  },
   "errors": {
     "recordingStart": "خطا در شروع ضبط",
     "recordingStartDesc": "مشکلی در شروع ضبط پیش آمد",

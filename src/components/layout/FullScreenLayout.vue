@@ -1,7 +1,7 @@
 <template>
   <div>
     <FullScreenHeader />
-    <div class="w-full p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+    <div class="w-full h-[calc(100dvh-100px)] p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
       <slot></slot>
     </div>
 

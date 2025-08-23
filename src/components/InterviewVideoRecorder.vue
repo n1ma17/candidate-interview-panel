@@ -40,63 +40,21 @@
     <div
       v-if="currentQuestion"
       :class="[
-        'question-box mt-3 flex flex-col h-[calc(100dvh-240px)]   transition-all duration-300   dark:bg-white/[0.03]',
+        'question-box mt-3 flex flex-col h-[calc(100dvh-200px)]   transition-all duration-300   dark:bg-white/[0.03]',
       ]"
     >
       <div class="w-full text-center h-full flex flex-col">
         <div v-if="currentQuestion" class="space-y-3 flex-1 flex flex-col">
-          <!-- <div class="flex items-center justify-between mb-4">
-            <span class="text-sm text-gray-500 dark:text-gray-400">
-              {{ t('interview.question') }} {{ state.currentQuestionIndex + 1 }}
-              {{ t('interview.of') }} {{ questions.length }}
-            </span>
-            <div class="flex items-center gap-2">
-              <div
-                class="w-2 h-2 rounded-full"
-                :class="i <= state.currentQuestionIndex ? 'bg-primary' : 'bg-gray-300'"
-                v-for="(_, i) in questions"
-                :key="i"
-              ></div>
-            </div>
-          </div> -->
 
           <div
             class="flex flex-col-reverse lg:flex-row-reverse items-stretch justify-between lg:justify-start gap-3 w-full flex-1"
           >
             <!-- Notes Section -->
-            <div
-              class="w-full h-fit lg:w-1/3 lg:h-full p-3 lg:p-4 bg-gray-200 dark:bg-gray-800 rounded-[12px] flex flex-col justify-between"
-            >
-              <div class="w-full hidden h-[calc(100%-80px)] lg:flex">sss</div>
-              <div class="w-full h-[80px] flex gap-2 items-center justify-between">
-                <input
-                  v-model="notes"
-                  :placeholder="t('notes.placeholder')"
-                  class="w-3/2 p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <div class="flex items-center justify-end h-6 lg:h-8">
-                  <button
-                    @click="saveNote"
-                    :disabled="!notes.trim()"
-                    class="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 text-white bg-primary rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg
-                      class="w-3 h-3 lg:w-4 lg:h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <NotesComponent
+              :current-question="currentQuestion"
+              @note-added="handleNoteAdded"
+              ref="notesComponentRef"
+            />
             <!-- Video Display -->
             <div class="relative w-full h-[calc(100%-80px)] lg:w-2/3 h-48 lg:h-full lg:min-h-[300px]">
               <div
@@ -363,6 +321,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ModalComponent from './common/ModalComponent.vue'
+import NotesComponent from './common/NotesComponent.vue'
 import { toast } from '@/composables/useToast'
 import { VoiceIcon } from '@/icons'
 
@@ -382,7 +341,7 @@ interface QuestionResponse {
   transcript: string
   duration: number
   timestamp: Date
-  note: string[] | null | []
+  note: Array<{text: string, timestamp: Date}> | null | []
 }
 
 // Props
@@ -415,8 +374,7 @@ const state = ref({
 })
 
 // Notes for the interview
-const notes = ref('')
-const questionNotes = ref<Record<number, string[]>>({})
+const questionNotes = ref<Record<number, Array<{text: string, timestamp: Date}>>>({})
 
 // Modal States
 const modals = ref({
@@ -430,6 +388,7 @@ const modals = ref({
 // Refs
 const previewVideo = ref<HTMLVideoElement>()
 const recordingVideo = ref<HTMLVideoElement>()
+const notesComponentRef = ref<InstanceType<typeof NotesComponent>>()
 
 // i18n
 const { t } = useI18n()
@@ -460,16 +419,18 @@ const formatTime = (seconds: number) => {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
 
+
+
 const startTimer = () => {
   state.value.recordingTime = 0
-  state.value.recordingInterval = setInterval(() => {
+  state.value.recordingInterval = window.setInterval(() => {
     state.value.recordingTime++
   }, 1000)
 }
 
 const stopTimer = () => {
   if (state.value.recordingInterval) {
-    clearInterval(state.value.recordingInterval)
+    window.clearInterval(state.value.recordingInterval)
     state.value.recordingInterval = null
   }
 }
@@ -741,6 +702,9 @@ const stopRecording = async () => {
 const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) => {
   if (!currentQuestion.value) return
 
+  // Get notes from the NotesComponent
+  const currentNotes = notesComponentRef.value?.getNotes() || []
+
   const response: QuestionResponse = {
     questionId: currentQuestion.value.id,
     questionTitle: currentQuestion.value.title,
@@ -750,24 +714,26 @@ const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) =>
     transcript: '',
     duration: state.value.recordingTime,
     timestamp: new Date(),
-    note: questionNotes.value[currentQuestion.value?.id || 0] || null,
+    note: currentNotes,
   }
 
   state.value.responses.push(response)
   emit('question-answered', response)
 }
 
-// Save note function
-const saveNote = () => {
-  if (!currentQuestion.value || !notes.value.trim()) return
+// Handle note added from NotesComponent
+const handleNoteAdded = (note: { text: string; timestamp: Date }) => {
+  if (!currentQuestion.value) return
 
   const questionId = currentQuestion.value.id
   if (!questionNotes.value[questionId]) {
     questionNotes.value[questionId] = []
   }
 
-  questionNotes.value[questionId].push(notes.value.trim())
-  notes.value = '' // Clear the textarea after saving
+  questionNotes.value[questionId].push({
+    text: note.text,
+    timestamp: note.timestamp
+  })
 
   toast.success({
     title: t('notes.save'),
@@ -781,6 +747,9 @@ const startInterview = async (videoStream: MediaStream, audioStream: MediaStream
   state.value.audioStream = audioStream
   state.value.currentQuestionIndex = 0
 
+  // Clear any existing notes
+  notesComponentRef.value?.clearNotes()
+
   // Setup video preview first
   await setupVideoPreview(videoStream)
 
@@ -791,6 +760,9 @@ const nextQuestion = async () => {
   state.value.currentQuestionIndex++
 
   if (state.value.currentQuestionIndex < props.questions.length) {
+    // Clear notes for the new question
+    notesComponentRef.value?.clearNotes()
+
     // Ensure video preview is set up for the new question
     if (state.value.mediaStream) {
       await setupVideoPreview(state.value.mediaStream)
@@ -868,11 +840,11 @@ const handlePermissionCancel = () => {
 const startCountdown = (videoStream: MediaStream, audioStream: MediaStream | null = null) => {
   modals.value.countdownTime = 5
 
-  const countdownInterval = setInterval(() => {
+  const countdownInterval = window.setInterval(() => {
     modals.value.countdownTime--
 
     if (modals.value.countdownTime <= 0) {
-      clearInterval(countdownInterval)
+      window.clearInterval(countdownInterval)
       modals.value.showCountdownModal = false
       startInterview(videoStream, audioStream)
     }
@@ -882,11 +854,11 @@ const startCountdown = (videoStream: MediaStream, audioStream: MediaStream | nul
 const startWaitingCountdown = () => {
   modals.value.waitingTime = 3
 
-  const waitingInterval = setInterval(() => {
+  const waitingInterval = window.setInterval(() => {
     modals.value.waitingTime--
 
     if (modals.value.waitingTime <= 0) {
-      clearInterval(waitingInterval)
+      window.clearInterval(waitingInterval)
       modals.value.showWaitingModal = false
       nextQuestion()
     }
@@ -900,7 +872,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (state.value.recordingInterval) {
-    clearInterval(state.value.recordingInterval)
+    window.clearInterval(state.value.recordingInterval)
   }
   if (state.value.mediaStream) {
     state.value.mediaStream.getTracks().forEach((track) => track.stop())

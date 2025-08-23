@@ -74,6 +74,12 @@
     "save": "Note Saved",
     "saveDesc": "Your note has been successfully saved"
   },
+  "chat": {
+    "noMessages": "No messages yet",
+    "startTyping": "Start typing your response...",
+    "characterCount": "{{count}} characters",
+    "pressEnter": "Press Enter to send"
+  },
   "errors": {
     "recordingStart": "Recording Start Error",
     "recordingStartDesc": "There was a problem starting the recording",
