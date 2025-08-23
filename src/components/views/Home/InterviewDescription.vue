@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-fit bg-white dark:bg-gray-900 rounded-[12px] border border-gray-100 dark:border-gray-700 shadow-sm p-6"
+    class="w-full h-fit rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6"
   >
     <h3 class="mb-8 font-semibold text-primary text-center dark:text-white/90 sm:text-2xl flex items-center justify-center gap-2">
       <DocIcon />

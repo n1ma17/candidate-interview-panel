@@ -1,18 +1,18 @@
 <template>
-  <div class="w-full h-full flex flex-col md:flex-row md:items-start justify-center">
-    <div class="w-full md:h-[230px] flex flex-col items-start justify-between md:gap-unset gap-4">
+  <div class="w-full h-full flex flex-col lg:flex-row lg:items-start justify-center">
+    <div class="w-full lg:h-[230px] flex flex-col items-start justify-between lg:gap-unset gap-4">
       <div class="w-full flex flex-col items-start justify-start">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+        <h1 class="text-lg sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">
           {{ welcomTitle }}
         </h1>
         <p class="text-gray-400 dark:text-gray-400 text-sm">
           {{ persianDate }}
         </p>
       </div>
-      <div class="w-full md:w-unset flex items-center justify-start gap-8">
+      <div class="w-full lg:w-fit flex flex-col sm:flex-row items-center justify-start gap-8 lg:gap-2">
         <div
           :class="[
-            'w-[30%] text-white md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] cursor-pointer shadow-md transition-all duration-200',
+            'w-full sm:w-[30%] text-white lg:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] cursor-pointer shadow-md transition-all duration-200',
             phase === 'initiate'
               ? status === 'accepted'
                 ? 'bg-success-700 opacity-100'
@@ -37,10 +37,10 @@
           <AcceptIcon v-else-if="phase !== 'initiate'" class="text-white w-[32px] h-[32px]" />
           <span class="text-white text-sm"> بررسی مدارک </span>
         </div>
-        <StepArrowIcon class="text-gray-400 w-[24px] h-[24px]" />
+        <StepArrowIcon class="rotate-[-90deg] sm:rotate-0 text-gray-400 w-[24px] h-[24px]" />
         <div
           :class="[
-            'w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
+            'w-full sm:w-[30%] lg:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
             phase === 'hr'
               ? status === 'accepted'
                 ? 'bg-success-700 opacity-100'
@@ -67,10 +67,10 @@
           <InvestigatIcon v-else-if="phase !== 'hr'" class="text-white" />
           <span class="text-white text-sm"> منابع انسانی </span>
         </div>
-        <StepArrowIcon class="text-gray-400 w-[24px] h-[24px]" />
+        <StepArrowIcon class="rotate-[-90deg] sm:rotate-0 text-gray-400 w-[24px] h-[24px]" />
         <div
           :class="[
-            'w-[30%] md:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
+            'w-full sm:w-[30%] lg:w-[120px] h-[100px] p-4 flex flex-col items-center justify-center gap-4 rounded-[12px] shadow-md text-white transition-all duration-200',
             phase === 'tech'
               ? status === 'accepted'
                 ? 'bg-success-700 opacity-100'
@@ -100,56 +100,22 @@
       </div>
     </div>
     <!-- User Status Card -->
-    <div class="w-full md:w-[500px] mt-8 md:mt-0">
-      <div
-        class="w-full md:h-[230px] bg-primary text-white dark:bg-primary rounded-[12px] border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
-      >
-        <div class="w-full flex items-start justify-between">
-          <div class="w-fit p-4 bg-[#293a51] dark:bg-[#293a51] rounded-[12px]">
-            <ListIcon />
-          </div>
-          <!-- Donut Chart -->
-          <VueApexCharts
-            type="donut"
-            :options="chartOptions"
-            :series="chartSeries"
-            width="100"
-            height="100"
-          />
-        </div>
-        <div class="w-full flex items-end justify-between mt-4">
-          <!-- User Info -->
-          <div class="w-half flex flex-col items-start justify-start gap-2">
-            <h3 class="text-lg font-semibold truncate">وضعیت</h3>
-            <p
-              class="text-[12px] text-gray-500 dark:text-gray-400 truncate"
-              :class="`${colorHandler}`"
-            >
-              {{ $t(`dashboard.${status}`) }}
-            </p>
-          </div>
-          <span
-            class="cursor-pointer w-half flex items-center justify-end gap-2 text-xs text-gray-500 dark:text-gray-400"
-          >
-            مشاهده جزئیات
-            <ChevronLeftIcon />
-          </span>
-        </div>
-      </div>
+    <div class="w-full lg:w-[500px] mt-8 lg:mt-0">
+      <statistics-chart :status="status" />
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
-import ListIcon from '@/icons/ListIcon.vue'
-import { ChevronLeftIcon } from '@/icons'
+import { computed } from 'vue'
+
 import InvestigatIcon from '@/icons/InvestigatIcon.vue'
 import InvestigatComplete from '@/icons/InvestigatComplete.vue'
 import InvestigateReject from '@/icons/InvestigateReject.vue'
 import AcceptIcon from '@/icons/AcceptIcon.vue'
 import StepArrowIcon from '@/icons/StepArrowIcon.vue'
+import StatisticsChart from '@/components/common/StatisticsChart.vue'
 
 // Props
 interface Props {
@@ -157,52 +123,10 @@ interface Props {
   phase?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   status: '',
   phase: '',
 })
-const colorHandler = computed(() => {
-  if (props.status === 'rejected') {
-    return 'text-red-500'
-  } else if (props.status === 'in_progress') {
-    return 'text-yellow-500'
-  } else if (props.status === 'completed') {
-    return 'text-blue-500'
-  } else if (props.status === 'accepted') {
-    return 'text-success-500'
-  } else {
-    return 'text-gray-500'
-  }
-})
-// Interview progress data
-const interviewProgress = ref(75) // Progress percentage
-
-// Chart configuration
-const chartSeries = computed(() => [interviewProgress.value, 100 - interviewProgress.value])
-
-const chartOptions = computed(() => ({
-  chart: {
-    type: 'donut',
-  },
-  labels: ['تکمیل شده', 'باقی‌مانده'],
-  colors: ['#61a8af', '#293a51'],
-  stroke: {
-    show: false,
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  legend: {
-    show: false,
-  },
-  plotOptions: {
-    pie: {
-      donut: {
-        size: '70%',
-      },
-    },
-  },
-}))
 
 // Welcome title based on time
 const welcomTitle = computed(() => {
