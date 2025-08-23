@@ -20,7 +20,7 @@
           <!-- User Notes -->
           <div v-if="notes.length > 0" class="space-y-2">
             <div v-for="(note, index) in notes" :key="index" class="flex items-start gap-2 justify-end">
-              <div class="flex-1 bg-primary text-white rounded-lg p-3 shadow-sm max-w-[80%]">
+              <div class="flex-1 bg-primary text-white rounded-lg p-3 shadow-sm text-right max-w-[80%]">
                 <p class="text-sm">{{ note.text }}</p>
                 <p class="text-xs opacity-75 mt-1">{{ formatTimestamp(note.timestamp) }}</p>
               </div>
@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // Types
@@ -112,8 +112,6 @@ const { t } = useI18n()
 const noteText = ref('')
 const notes = ref<Note[]>([])
 
-// Computed
-const hasNotes = computed(() => notes.value.length > 0)
 
 // Methods
 const formatTimestamp = (date: Date) => {
