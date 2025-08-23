@@ -735,10 +735,6 @@ const handleNoteAdded = (note: { text: string; timestamp: Date }) => {
     timestamp: note.timestamp
   })
 
-  toast.success({
-    title: t('notes.save'),
-    description: t('notes.saveDesc'),
-  })
 }
 
 // Interview Flow
