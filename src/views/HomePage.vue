@@ -2,12 +2,13 @@
   <admin-layout>
     <div class="pb-24 md:pb-0">
       <DashboardHeader :phase="phase" :status="status" />
-      <StatusComponent />
-      <InterviewDescription class="mt-[32px]" />
+      <StatusComponent :status="status" :phase="phase" />
+      <InterviewDescription v-if="phase !== 'initiate'" class="mt-[32px]" />
     </div>
 
     <!-- Show start button only if interview is not completed -->
     <div
+      v-if="showInetrviewBtn"
       class="fixed bottom-0 left-0 right-0 p-4 md:mt-[38px] bg-white rounded-t-[12px] dark:bg-gray-900 border-t-3 dark:border-t-1 border-gray-100 dark:border-gray-700 md:relative md:p-0 md:bg-transparent md:border-0"
     >
       <button
@@ -35,6 +36,8 @@ const { t } = useI18n()
 
 const status = ref('')
 const phase = ref('')
+const showInetrviewBtn = ref(false)
+
 
 onMounted(async () => {
   // Fetch user data from API and store in localStorage
@@ -43,6 +46,11 @@ onMounted(async () => {
     if (userResponse.success && userResponse.data) {
       status.value = userResponse.data.status
       phase.value = userResponse.data.phase
+      if (status.value === 'in_progress' || phase.value === 'initiate') {
+        showInetrviewBtn.value = false
+      } else {
+        showInetrviewBtn.value = true
+      }
     } else {
       console.error('❌ Failed to fetch user data:', userResponse.error)
     }
