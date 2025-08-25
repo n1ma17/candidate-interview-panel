@@ -10,7 +10,7 @@ export interface RegisterRequest {
   email: string
   password1: string
   password2: string
-  position?: number
+  job_category?: number
   resume?: File
 }
 
@@ -119,8 +119,8 @@ class AuthService {
       formData.append('password1', userData.password1)
       formData.append('password2', userData.password2)
 
-      if (userData.position) {
-        formData.append('position', userData.position.toString())
+      if (userData.job_category) {
+        formData.append('job_category', userData.job_category.toString())
       }
 
       if (userData.resume) {

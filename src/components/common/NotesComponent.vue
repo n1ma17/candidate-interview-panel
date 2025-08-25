@@ -12,8 +12,8 @@
               </svg>
             </div>
             <div class="flex-1 bg-white dark:bg-gray-700 rounded-lg p-3 shadow-sm">
-              <p class="text-sm text-gray-900 dark:text-white font-medium">{{ currentQuestion.title }}</p>
-              <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">{{ currentQuestion.description }}</p>
+              <p class="text-sm text-gray-900 dark:text-white font-medium">{{ currentQuestion.text }}</p>
+              <!-- <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">{{ currentQuestion.description }}</p> -->
             </div>
           </div>
 
@@ -78,15 +78,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { Question } from '@/services/questionsService'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-// Types
-interface Question {
-  id: number
-  title: string
-  description: string
-}
 
 interface Note {
   text: string

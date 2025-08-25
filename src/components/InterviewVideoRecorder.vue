@@ -131,7 +131,7 @@
               class="flex items-center gap-2 text-[16px] lg:text-[16px] mb-4 lg:mb-0 font-[7oo] text-primary dark:text-white mt-2 text-left"
             >
               <VoiceIcon class="w-8 h-8 text-success-500" />
-              {{ currentQuestion.description }}
+              {{ currentQuestion.text }}
             </span>
             <div class="flex items-center w-full lg:w-fit justify-between gap-2">
               <span class="text-sm text-gray-500 dark:text-gray-400"
@@ -324,13 +324,7 @@ import ModalComponent from './common/ModalComponent.vue'
 import NotesComponent from './common/NotesComponent.vue'
 import { toast } from '@/composables/useToast'
 import { VoiceIcon } from '@/icons'
-
-// Types
-interface Question {
-  id: number
-  title: string
-  description: string
-}
+import type { Question } from '@/services/questionsService'
 
 interface QuestionResponse {
   questionId: number
@@ -348,7 +342,11 @@ interface QuestionResponse {
 interface Props {
   questions: Question[]
 }
-
+// interface Question {
+//   id: number
+//   title: string
+//   description: string
+// }
 const props = defineProps<Props>()
 
 // Emits
@@ -707,7 +705,7 @@ const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) =>
 
   const response: QuestionResponse = {
     questionId: currentQuestion.value.id,
-    questionTitle: currentQuestion.value.title,
+    questionTitle: currentQuestion.value.text,
     questionNumber: state.value.currentQuestionIndex + 1,
     videoBlob: videoBlob,
     audioBlob: audioBlob,

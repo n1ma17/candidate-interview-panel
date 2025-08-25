@@ -26,11 +26,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/signin',
-      name: 'Signin',
+      path: '/auth',
+      name: 'Auth',
       component: () => import('../views/Auth/AuthPages.vue'),
       meta: {
-        title: 'Signin',
+        title: 'Authentication',
         guest: true,
       },
     },
@@ -56,11 +56,11 @@ router.beforeEach((to, from, next) => {
 
   // If route requires authentication and user is not authenticated
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/signin')
+    next('/auth')
     return
   }
 
-  // If user is authenticated and trying to access guest pages (signin/signup)
+  // If user is authenticated and trying to access guest pages (auth)
   // if (to.meta.guest && isAuthenticated) {
   //   next('/')
   //   return

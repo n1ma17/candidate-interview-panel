@@ -101,5 +101,11 @@
     "settings": "Account Settings",
     "support": "Support",
     "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "signin": "Sign In",
+    "signup": "Sign Up"
   }
 } 

@@ -12,13 +12,13 @@ const showConfirmPassword = ref(false)
 const selectedFile = ref<File | null>(null)
 
 // Job categories from API
-const jobPositions = ref<Category[]>([])
+const jobCategories = ref<Category[]>([])
 const isLoadingCategories = ref(false)
 const registerForm = ref({
   email: '',
   password: '',
   confirmPassword: '',
-  position: 0,
+  job_category: 0,
   resume: null as File | null,
 })
 const isRegisterFormValid = computed(() => {
@@ -26,7 +26,7 @@ const isRegisterFormValid = computed(() => {
     registerForm.value.email.trim() &&
     registerForm.value.password &&
     registerForm.value.confirmPassword &&
-    registerForm.value.position > 0 &&
+    registerForm.value.job_category > 0 &&
     registerForm.value.resume &&
     registerForm.value.password === registerForm.value.confirmPassword &&
     registerForm.value.password.length >= 8 &&
@@ -71,11 +71,11 @@ const fetchCategories = async () => {
   try {
     const response = await categoriesService.getCategories()
     if (response && Array.isArray(response)) {
-      jobPositions.value = response
+      jobCategories.value = response
     } else {
       toast.error({
         title: 'خطا در دریافت دسته‌بندی‌ها',
-        description: 'خطا در بارگذاری موقعیت‌های شغلی'
+        description: 'خطا در بارگذاری دسته‌بندی‌های شغلی'
       })
     }
   } catch {
@@ -120,7 +120,7 @@ const handleRegister = async () => {
     registerForm.value.email,
     registerForm.value.password,
     registerForm.value.confirmPassword,
-    registerForm.value.position,
+    registerForm.value.job_category,
     registerForm.value.resume || undefined
   )
 }
@@ -265,20 +265,20 @@ const handleRegister = async () => {
       <!-- Position Selection -->
       <div>
         <label
-          for="register-position"
+          for="register-job-category"
           class="mb-1.5 block text-sm font-medium text-gray-900"
         >
-          موقعیت شغلی<span class="text-error-500">*</span>
+          دسته‌بندی شغلی<span class="text-error-500">*</span>
         </label>
         <SelectComponent
-          v-model="registerForm.position"
-          :options="jobPositions"
-          placeholder="موقعیت شغلی خود را انتخاب کنید"
-          id="register-position"
+          v-model="registerForm.job_category"
+          :options="jobCategories"
+          placeholder="دسته‌بندی شغلی خود را انتخاب کنید"
+          id="register-job-category"
           :disabled="isLoadingCategories"
         />
         <div v-if="isLoadingCategories" class="mt-2 text-xs text-gray-600">
-          <p>در حال بارگذاری موقعیت‌های شغلی...</p>
+          <p>در حال بارگذاری دسته‌بندی‌های شغلی...</p>
         </div>
       </div>
 
@@ -301,7 +301,7 @@ const handleRegister = async () => {
           />
           <label
             for="register-resume"
-            class="flex items-center justify-center w-full h-11 px-4 py-2.5 text-sm text-gray-100 border border-gray-100 rounded-lg cursor-pointer hover:border-brand-300 transition-colors"
+            class="flex items-center justify-center w-full h-11 px-4 py-2.5 text-sm text-gray-500 border border-gray-100 rounded-lg cursor-pointer hover:border-brand-300 transition-colors"
           >
             <FileUpload class="ml-4" />
             <span v-if="!registerForm.resume">انتخاب فایل PDF</span>

@@ -104,7 +104,7 @@ api.interceptors.response.use(
       if (!shouldSkipRedirect) {
         cookieManager.removeAllTokens()
         localStorage.removeItem('auth_user')
-        window.location.href = '/signin'
+        window.location.href = '/auth'
       } else {
         console.log('🔄 Skipping redirect for endpoint:', originalRequest.url)
       }

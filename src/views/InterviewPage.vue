@@ -14,37 +14,31 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
+
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import InterviewVideoRecorder from '@/components/InterviewVideoRecorder.vue'
 import { useRouter } from 'vue-router'
+import questionsService, { type Question } from '@/services/questionsService'
 
-const { t } = useI18n()
 const currentPageTitle = ref('interview')
 const router = useRouter()
 
 // Component ref
 const videoRecorderRef = ref()
-
 // Questions Data
-const questions = ref([
-  {
-    id: 1,
-    title: t('questions.personalIntroduction.title'),
-    description: t('questions.personalIntroduction.description'),
-  },
-  {
-    id: 2,
-    title: t('questions.motivation.title'),
-    description: t('questions.motivation.description'),
-  },
-  {
-    id: 3,
-    title: t('questions.challengingExperience.title'),
-    description: t('questions.challengingExperience.description'),
-  },
-])
+const questions = ref<Question[]>([])
+
+// Fetch questions from server
+const fetchQuestions = async () => {
+  try {
+    const fetchedQuestions = await questionsService.getQuestions()
+    questions.value = fetchedQuestions
+    console.log('Fetched questions:', fetchedQuestions)
+  } catch (error) {
+    console.error('Error fetching questions:', error)
+  }
+}
 
 // Interview responses storage
 interface QuestionResponse {
@@ -60,8 +54,12 @@ interface QuestionResponse {
 
 const responses = ref<QuestionResponse[]>([])
 
-onMounted(() => {
+onMounted(async () => {
   console.log('InterviewPage mounted')
+
+  // Fetch questions from server
+  await fetchQuestions()
+
   // بررسی localStorage برای مصاحبه‌های قبلی
   const savedInterview = checkLocalStorage()
   if (savedInterview) {
@@ -84,12 +82,12 @@ const handleInterviewCompleted = (allResponses: QuestionResponse[]) => {
     const interviewData = {
       completedAt: new Date().toISOString(),
       totalQuestions: questions.value.length,
-      responses: responses.value.map(r => ({
+      responses: responses.value.map((r) => ({
         questionNumber: r.questionNumber,
         questionTitle: r.questionTitle,
         duration: r.duration,
-        timestamp: r.timestamp
-      }))
+        timestamp: r.timestamp,
+      })),
     }
 
     localStorage.setItem('completeInterview', JSON.stringify(interviewData))

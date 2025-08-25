@@ -17,31 +17,7 @@
           </span>
           <img class="w-[160px] h-[68px]" src="/images/logo/logo-en.jpg" alt="Logo" />
         </div>
-        <!-- Tabs -->
-        <div class="flex justify-between mb-6 border-b ">
-          <button
-            :class="[
-              'flex-1 py-2 text-center font-semibold transition',
-              activeTab === 'login'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-blue-600',
-            ]"
-            @click="activeTab = 'login'"
-          >
-            Login
-          </button>
-          <button
-            :class="[
-              'flex-1 py-2 text-center font-semibold transition',
-              activeTab === 'register'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-blue-600',
-            ]"
-            @click="activeTab = 'register'"
-          >
-            Register
-          </button>
-        </div>
+
         <!-- Forms -->
         <transition name="fade" mode="out-in">
           <div v-if="activeTab === 'login'" key="login">
@@ -51,6 +27,28 @@
             <RegisterComponent />
           </div>
         </transition>
+
+        <!-- Switch between forms text -->
+        <div class="mt-6 text-center text-sm text-gray-600">
+          <p v-if="activeTab === 'login'">
+            حساب کاربری ندارید؟
+            <button
+              @click="activeTab = 'register'"
+              class="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            >
+              {{ t('auth.register') }}
+            </button>
+          </p>
+          <p v-else>
+            قبلاً حساب کاربری دارید؟
+            <button
+              @click="activeTab = 'login'"
+              class="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            >
+              {{ t('auth.login') }}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -64,9 +62,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import LoginComponent from '@/components/views/Auth/LoginComponent.vue'
 import RegisterComponent from '@/components/views/Auth/RegisterComponent.vue'
 import { useAuthQuery } from '@/composables/useAuthQuery'
+
+const { t } = useI18n()
 const { error } = useAuthQuery()
 
 const activeTab = ref('login')

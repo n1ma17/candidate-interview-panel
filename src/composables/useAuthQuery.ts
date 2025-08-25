@@ -84,13 +84,13 @@ export const useAuthQuery = () => {
     onSuccess: () => {
       cookieManager.removeAllTokens()
       queryClient.clear()
-      router.push('/signin')
+      router.push('/auth')
     },
     onError: () => {
       // Even if logout fails, clear local state
       cookieManager.removeAllTokens()
       queryClient.clear()
-      router.push('/signin')
+      router.push('/auth')
     },
   })
 
@@ -107,7 +107,7 @@ export const useAuthQuery = () => {
     email: string,
     password: string,
     confirmPassword: string,
-    position?: number,
+    job_category?: number,
     resume?: File,
   ) => {
     error.value = null
@@ -116,7 +116,7 @@ export const useAuthQuery = () => {
       email,
       password1: password,
       password2: confirmPassword,
-      position,
+      job_category,
       resume,
     })
   }

@@ -107,5 +107,11 @@
     "in_progress": "در حال انجام",
     "completed": "تکمیل شده",
     "accepted": "قبول شده"
+  },
+  "auth": {
+    "login": "ورود",
+    "register": "ثبت نام",
+    "signin": "ورود",
+    "signup": "ثبت نام"
   }
 } 
