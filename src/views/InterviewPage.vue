@@ -13,32 +13,23 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import InterviewVideoRecorder from '@/components/InterviewVideoRecorder.vue'
 import { useRouter } from 'vue-router'
-import questionsService, { type Question } from '@/services/questionsService'
+import { type Question } from '@/services/questionsService'
+import { useQuestionsQuery } from '@/composables/useQuestionsQuery'
 
 const currentPageTitle = ref('interview')
 const router = useRouter()
 
 // Component ref
 const videoRecorderRef = ref()
-// Questions Data
-const questions = ref<Question[]>([])
-
-// Fetch questions from server
-const fetchQuestions = async () => {
-  try {
-    const fetchedQuestions = await questionsService.getQuestions()
-    questions.value = fetchedQuestions
-    console.log('Fetched questions:', fetchedQuestions)
-  } catch (error) {
-    console.error('Error fetching questions:', error)
-  }
-}
+// Questions Data via vue-query
+const { data: questionsData } = useQuestionsQuery()
+const questions = computed<Question[]>(() => questionsData?.value ?? [])
 
 // Interview responses storage
 interface QuestionResponse {
@@ -56,9 +47,6 @@ const responses = ref<QuestionResponse[]>([])
 
 onMounted(async () => {
   console.log('InterviewPage mounted')
-
-  // Fetch questions from server
-  await fetchQuestions()
 
   // بررسی localStorage برای مصاحبه‌های قبلی
   const savedInterview = checkLocalStorage()

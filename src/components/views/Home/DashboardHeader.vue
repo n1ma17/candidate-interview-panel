@@ -146,7 +146,7 @@ const welcomTitle = computed(() => {
     if (userData) {
       const user = JSON.parse(userData)
       const firstName = user.first_name || user.email || 'کاربر'
-      return `${greeting} ${firstName}`
+      return `${greeting} ${firstName.split('@')[0]}`
     }
   } catch (error) {
     console.error('Error reading user data:', error)

@@ -24,9 +24,9 @@
 <script setup lang="ts">
 import AdminLayout from '../components/layout/AdminLayout.vue'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import authService from '../services/authService'
+import { useUserQuery } from '@/composables/useUserQuery'
 import DashboardHeader from '../components/views/Home/DashboardHeader.vue'
 import InterviewDescription from '../components/views/Home/InterviewDescription.vue'
 import StatusComponent from '../components/views/Home/StatusComponent.vue'
@@ -38,24 +38,23 @@ const status = ref('')
 const phase = ref('')
 const showInetrviewBtn = ref(false)
 
+// Fetch user via vue-query
+const { data: userData } = useUserQuery()
+
+watch(
+  userData,
+  (user) => {
+    if (user) {
+      status.value = user.status
+      phase.value = user.phase
+      showInetrviewBtn.value = !(status.value === 'reject' || phase.value === 'initiate')
+    }
+  },
+  { immediate: true }
+)
+
 
 onMounted(async () => {
-  // Fetch user data from API and store in localStorage
-  try {
-    const userResponse = await authService.getUserData()
-    if (userResponse.success && userResponse.data) {
-      status.value = userResponse.data.status
-      phase.value = userResponse.data.phase
-      if (status.value === 'reject' || phase.value === 'initiate') {
-        showInetrviewBtn.value = false
-      } else {
-        showInetrviewBtn.value = true
-      }
-    } else {
-      console.error('❌ Failed to fetch user data:', userResponse.error)
-    }
-  } catch (error) {
-    console.error('❌ Error fetching user data:', error)
-  }
+  // any additional on-mount logic can remain here
 })
 </script>

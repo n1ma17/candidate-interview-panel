@@ -6,7 +6,7 @@
       type="button"
       :disabled="disabled"
       :class="[
-        'w-full h-11 px-4 py-2.5 text-sm text-left border rounded-lg focus:outline-hidden focus:ring-3 transition-colors flex items-center justify-between',
+        'w-full h-11 px-4 py-2.5 text-sm text-left border border-gray-300 rounded-lg focus:outline-hidden focus:ring-3 transition-colors flex items-center justify-between',
         buttonClasses,
         disabled ? 'opacity-50 cursor-not-allowed' : '',
       ]"

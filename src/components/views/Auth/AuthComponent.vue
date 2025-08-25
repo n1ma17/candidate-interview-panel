@@ -1,23 +1,25 @@
 <template>
-  <div class="flex h-screen">
-    <!-- Left Side -->
-    <div class="flex flex-col w-full lg:w-1/2 py-10 items-center justify-center bg-[#fff]">
-
-      <!-- Error message -->
-      <div
-        v-if="error"
-        class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-[12px] dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
-      >
-        {{ error }}
+  <div
+    class="flex h-screen w-screen md:p-2 justify-center items-center lg:justify-none lg:items-none"
+  >
+    <!-- Error message -->
+    <div
+      v-if="error"
+      class="p-4 mb-5 text-sm text-red-800 bg-red-50 border border-red-200 rounded-[12px] dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
+    >
+      {{ error }}
+    </div>
+    <!-- form Side -->
+    <div
+      class="rounded-[12px] flex flex-col w-full h-full lg:h-fit lg:w-1/3 py-10 items-center justify-between lg:p-4"
+    >
+      <div class="w-full flex flex-col px-4 justify-between items-center">
+        <img class="w-[400px] h-[150px] lg:w-[120px] lg:h-[58px]" src="/images/logo/logo-en.jpg" alt="Logo" />
+        <span class="text-[48px] lg:text-[24px] font-bold text-[#000]">
+          {{ activeTab === 'login' ? 'ورود' : 'ثبت نام' }}
+        </span>
       </div>
-      <div class="w-full lg:w-[80%] xl:w-[60%] min-h-[500px] p-8 lg:shadow-xl rounded-2xl bg-[#ffffff]">
-        <div class="w-full mb-4 flex justify-between items-center">
-          <span class="text-[32px] font-bold text-[#000]">
-            {{ activeTab === 'login' ? 'ورود' : 'ثبت نام' }}
-          </span>
-          <img class="w-[160px] h-[68px]" src="/images/logo/logo-en.jpg" alt="Logo" />
-        </div>
-
+      <div class="h-full w-[80%] xl:w-[100%] min-h-fit lg:min-h-[500px] flex flex-col justify-center">
         <!-- Forms -->
         <transition name="fade" mode="out-in">
           <div v-if="activeTab === 'login'" key="login">
@@ -52,10 +54,10 @@
       </div>
     </div>
 
-    <!-- Right Side -->
+    <!-- left Side -->
     <div
-      class="rounded-[12px] shadow-xl hidden lg:flex w-1/2 bg-cover bg-center"
-      style="background-image: url('/images/views/AI.jpg')"
+      class="rounded-[12px] shadow-xl hidden lg:flex w-2/3 h-full bg-cover bg-center bg-[url('/images/views/ai.png')]"
+
     ></div>
   </div>
 </template>
@@ -66,6 +68,7 @@ import { useI18n } from 'vue-i18n'
 import LoginComponent from '@/components/views/Auth/LoginComponent.vue'
 import RegisterComponent from '@/components/views/Auth/RegisterComponent.vue'
 import { useAuthQuery } from '@/composables/useAuthQuery'
+
 
 const { t } = useI18n()
 const { error } = useAuthQuery()
