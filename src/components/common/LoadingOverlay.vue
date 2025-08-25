@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <div
-      v-if="visible"
+      v-if="internalVisible"
       class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 backdrop-blur-sm"
       role="status"
       aria-live="polite"
@@ -18,13 +18,54 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch, onBeforeUnmount } from 'vue'
+
 interface Props {
   visible: boolean
   message?: string
+  minDuration?: number
 }
 
-withDefaults(defineProps<Props>(), {
-  message: 'در حال بارگذاری اطلاعات...'
+const props = withDefaults(defineProps<Props>(), {
+  message: 'در حال بارگذاری اطلاعات...',
+  minDuration: 3000
+})
+
+const internalVisible = ref(false)
+let hideTimer: number | null = null
+let showStartedAt: number | null = null
+
+watch(
+  () => props.visible,
+  (isShown) => {
+    if (isShown) {
+      if (hideTimer) {
+        clearTimeout(hideTimer)
+        hideTimer = null
+      }
+      showStartedAt = Date.now()
+      internalVisible.value = true
+      return
+    }
+
+    const started = showStartedAt ?? Date.now()
+    const elapsed = Date.now() - started
+    const remaining = Math.max(0, props.minDuration - elapsed)
+    if (remaining === 0) {
+      internalVisible.value = false
+    } else {
+      if (hideTimer) clearTimeout(hideTimer)
+      hideTimer = window.setTimeout(() => {
+        internalVisible.value = false
+        hideTimer = null
+      }, remaining)
+    }
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  if (hideTimer) clearTimeout(hideTimer)
 })
 </script>
 
