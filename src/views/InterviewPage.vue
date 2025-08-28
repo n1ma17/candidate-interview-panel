@@ -19,8 +19,12 @@ import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import InterviewVideoRecorder from '@/components/InterviewVideoRecorder.vue'
 import { useRouter } from 'vue-router'
-import { type Question } from '@/services/questionsService'
-import { useQuestionsQuery } from '@/composables/useQuestionsQuery'
+import {
+  type Question,
+  type QuestionResponse,
+  type QuestionPayload,
+} from '@/services/questionsService'
+import { useQuestionsQuery, usePostQuestionMutation } from '@/composables/useQuestionsQuery'
 
 const currentPageTitle = ref('interview')
 const router = useRouter()
@@ -31,23 +35,12 @@ const videoRecorderRef = ref()
 const { data: questionsData } = useQuestionsQuery()
 const questions = computed<Question[]>(() => questionsData?.value ?? [])
 
-// Interview responses storage
-interface QuestionResponse {
-  questionId: number
-  questionTitle: string
-  questionNumber: number
-  videoBlob: Blob | null
-  audioBlob: Blob | null
-  transcript: string
-  duration: number
-  timestamp: Date
-}
+// Post question mutation
+const postQuestionMutation = usePostQuestionMutation()
 
 const responses = ref<QuestionResponse[]>([])
 
 onMounted(async () => {
-  console.log('InterviewPage mounted')
-
   // بررسی localStorage برای مصاحبه‌های قبلی
   const savedInterview = checkLocalStorage()
   if (savedInterview) {
@@ -56,13 +49,26 @@ onMounted(async () => {
 })
 
 // Event Handlers
-const handleQuestionAnswered = (response: QuestionResponse) => {
-  console.log(`Question answered:${response.questionId}`, response)
-  responses.value.push(response)
+const handleQuestionAnswered = async (response: QuestionResponse) => {
+  try {
+    const questionPayload: QuestionPayload = {
+      question: response.question,
+      video: response.video,
+      audio: response.audio,
+      note: response.note,
+    }
+
+    const result = await postQuestionMutation.mutateAsync(questionPayload)
+    console.log('Question posted successfully:', result)
+
+    responses.value.push(response)
+  } catch (error) {
+    console.error('Error posting question:', error)
+    responses.value.push(response)
+  }
 }
 
 const handleInterviewCompleted = (allResponses: QuestionResponse[]) => {
-  console.log('Interview completed with responses:', allResponses)
   responses.value = allResponses
 
   // Save to localStorage
@@ -71,10 +77,10 @@ const handleInterviewCompleted = (allResponses: QuestionResponse[]) => {
       completedAt: new Date().toISOString(),
       totalQuestions: questions.value.length,
       responses: responses.value.map((r) => ({
-        questionNumber: r.questionNumber,
-        questionTitle: r.questionTitle,
-        duration: r.duration,
-        timestamp: r.timestamp,
+        question: r.question,
+        video: r.video,
+        audio: r.audio,
+        note: r.note,
       })),
     }
 

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/vue-query'
-import questionsService, { type Question } from '@/services/questionsService'
+import { useQuery, useMutation } from '@tanstack/vue-query'
+import questionsService, { type Question, type QuestionPayload, type QuestionResponse } from '@/services/questionsService'
 
 export const useQuestionsQuery = () => {
   return useQuery<Question[]>({
@@ -13,6 +13,12 @@ export const useQuestionsByPhaseQuery = (phase: string) => {
     queryKey: ['questions', 'phase', phase],
     queryFn: () => questionsService.getQuestionsByPhase(phase),
     enabled: !!phase,
+  })
+}
+
+export const usePostQuestionMutation = () => {
+  return useMutation<QuestionResponse, Error, QuestionPayload>({
+    mutationFn: (questionPayload: QuestionPayload) => questionsService.postQuestion(questionPayload),
   })
 }
 

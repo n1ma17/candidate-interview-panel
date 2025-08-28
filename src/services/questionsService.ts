@@ -13,20 +13,17 @@ export interface QuestionsResponse {
   error?: string
 }
 export interface QuestionResponse {
-  id: number
-  interview: string
-  interview_phase: string
-  question: Question
-  video: Blob
-  audio: Blob
-  ai_transcript: string
-  ai_summary: string
-  score: number
-  passed: boolean
-  attempt: number
-  created_at: Date
+  question: number
+  video: File
+  audio: File
+  note: string
 }
-
+export interface QuestionPayload {
+  question: number
+  video: File
+  audio: File
+  note: string
+}
 class QuestionsService {
   // Get all questions
   async getQuestions(): Promise<Question[]> {
@@ -38,13 +35,19 @@ class QuestionsService {
       return []
     }
   }
-  async postQuestion(question: QuestionResponse): Promise<Question> {
+  async postQuestion(question: QuestionPayload): Promise<QuestionResponse> {
     try {
-      const response = await api.post<Question>('response/', question)
+      const formData = new FormData()
+      formData.append('question', String(question.question))
+      formData.append('video', question.video)
+      formData.append('audio', question.audio)
+      formData.append('note', question.note || '')
+
+      const response = await api.post<QuestionResponse>('responses/', formData)
       return response.data
     } catch (error: unknown) {
       console.log(error)
-      return {} as Question
+      return {} as QuestionResponse
     }
   }
   // Get questions by phase

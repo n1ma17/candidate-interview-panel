@@ -45,7 +45,6 @@
     >
       <div class="w-full text-center h-full flex flex-col">
         <div v-if="currentQuestion" class="space-y-3 flex-1 flex flex-col">
-
           <div
             class="flex flex-col-reverse lg:flex-row-reverse items-stretch justify-between lg:justify-start gap-3 w-full flex-1"
           >
@@ -56,7 +55,9 @@
               ref="notesComponentRef"
             />
             <!-- Video Display -->
-            <div class="relative w-full h-[calc(100%-80px)] lg:w-2/3 h-48 lg:h-full lg:min-h-[300px]">
+            <div
+              class="relative w-full h-[calc(100%-80px)] lg:w-2/3 h-48 lg:h-full lg:min-h-[300px]"
+            >
               <div
                 class="relative w-full h-full bg-gray-200 dark:bg-gray-800 rounded-[12px] overflow-hidden"
               >
@@ -324,19 +325,9 @@ import ModalComponent from './common/ModalComponent.vue'
 import NotesComponent from './common/NotesComponent.vue'
 import { toast } from '@/composables/useToast'
 import { VoiceIcon } from '@/icons'
-import type { Question } from '@/services/questionsService'
+import type { Question, QuestionResponse } from '@/services/questionsService'
 
-interface QuestionResponse {
-  questionId: number
-  questionTitle: string
-  questionNumber: number
-  videoBlob: Blob | null
-  audioBlob: Blob | null
-  transcript: string
-  duration: number
-  timestamp: Date
-  note: Array<{text: string, timestamp: Date}> | null | []
-}
+
 
 // Props
 interface Props {
@@ -599,12 +590,29 @@ const startRecording = async () => {
     }
 
     state.value.mediaRecorder.onstop = () => {
-      const videoBlob = new Blob(state.value.recordingChunks, { type: videoMimeType })
-      const audioBlob =
-        state.value.audioChunks.length > 0
-          ? new Blob(state.value.audioChunks, { type: 'audio/webm' })
-          : null
-      saveQuestionResponse(videoBlob, audioBlob)
+      const timestamp = Date.now()
+      const videoExtension = videoMimeType.includes('mp4') ? 'mp4' : 'webm'
+      const videoFile = new File(
+        state.value.recordingChunks,
+        `recorded-video-${timestamp}.${videoExtension}`,
+        {
+          type: videoMimeType,
+          lastModified: timestamp,
+        },
+      )
+
+      const resolvedAudioMime = state.value.audioRecorder?.mimeType || 'audio/webm'
+      const audioExtension = resolvedAudioMime.includes('mp4') ? 'mp4' : 'webm'
+      const audioFile = new File(
+        state.value.audioChunks,
+        `recorded-audio-${timestamp}.${audioExtension}`,
+        {
+          type: resolvedAudioMime,
+          lastModified: timestamp,
+        },
+      )
+
+      saveQuestionResponse(videoFile, audioFile)
     }
 
     // Create MediaRecorder for audio if we have separate audio stream
@@ -697,22 +705,17 @@ const stopRecording = async () => {
 }
 
 // Data Management
-const saveQuestionResponse = (videoBlob: Blob, audioBlob: Blob | null = null) => {
+const saveQuestionResponse = (videoFile: File, audioFile: File) => {
   if (!currentQuestion.value) return
 
   // Get notes from the NotesComponent
   const currentNotes = notesComponentRef.value?.getNotes() || []
 
   const response: QuestionResponse = {
-    questionId: currentQuestion.value.id,
-    questionTitle: currentQuestion.value.text,
-    questionNumber: state.value.currentQuestionIndex + 1,
-    videoBlob: videoBlob,
-    audioBlob: audioBlob,
-    transcript: '',
-    duration: state.value.recordingTime,
-    timestamp: new Date(),
-    note: currentNotes,
+    question: currentQuestion.value.id,
+    video: videoFile,
+    audio: audioFile,
+    note: currentNotes.map((note) => note.text).join(','),
   }
 
   state.value.responses.push(response)

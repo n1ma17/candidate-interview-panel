@@ -27,6 +27,14 @@ api.interceptors.request.use(
     // Add Origin header only
     config.headers['Origin'] = window.location.origin
 
+    // Ensure correct Content-Type for FormData uploads
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      if (config.headers) {
+        // Let the browser set the correct multipart boundary automatically
+        delete (config.headers as any)['Content-Type']
+      }
+    }
+
     // Debug CORS request
     console.log('🚀 Request Config:', {
       url: config.url,

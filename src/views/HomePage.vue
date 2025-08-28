@@ -19,10 +19,14 @@
       </button>
     </div>
   </admin-layout>
+  <LoadingOverlay :visible="isLoading" />
+
 </template>
 
 <script setup lang="ts">
 import AdminLayout from '../components/layout/AdminLayout.vue'
+import LoadingOverlay from '@/components/common/LoadingOverlay.vue'
+
 import { useRouter } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -30,6 +34,8 @@ import { useUserQuery } from '@/composables/useUserQuery'
 import DashboardHeader from '../components/views/Home/DashboardHeader.vue'
 import InterviewDescription from '../components/views/Home/InterviewDescription.vue'
 import StatusComponent from '../components/views/Home/StatusComponent.vue'
+const { isLoading } = useUserQuery()
+
 
 const router = useRouter()
 const { t } = useI18n()
